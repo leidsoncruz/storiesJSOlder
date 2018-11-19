@@ -1,0 +1,29 @@
+.progress-bar {
+    width: 100%;
+    background-color: grey;
+}
+
+.mybar {
+    width: 1%;
+    height: 30px;
+    background-color: green;
+}
+
+
+.story > .story__cover > img { width: 200px;}
+
+ul.story__items {
+  list-style: none;
+}
+
+.story__item {
+  position: relative;
+}
+
+.story__item > span {
+  position: absolute;
+  bottom: 5px;
+  font-weight: bolder;
+  color: white;
+  font-size: 30px;
+}
