@@ -13,11 +13,12 @@ class Stories {
   }
 
   playStories(element) {
-    console.log('Play story');
+    console.log('Play story', element.getElementsByClassName('active'));
+
+    element.classList.add('current');
 
     if(element.getElementsByClassName('active').length <= 0){
       element.getElementsByTagName('li')[0].classList.add('active');
-      element.style.display="block";
       screenfull.request(element);
     }
 
@@ -49,7 +50,6 @@ class Stories {
     const nextItem = activeItem.nextElementSibling;
 
     if(nextItem && nextItem.tagName == 'LI'){
-      activeItem.style.display = 'none';
       activeItem.classList.remove('active');
       nextItem.classList.add('active');
       this.startProgress()
@@ -62,8 +62,10 @@ class Stories {
 
   exit(){
     console.log('Saindo');
-    const ulActive = document.querySelector('li.story__item.active').parentElement;
-    ulActive.style.display = "none";
+    const activeStory = document.querySelector('li.story__item.active');
+    const parentActive = activeStory.parentElement;
+    activeStory.classList.remove('active');
+    parentActive.classList.remove('current');
     screenfull.exit();
   }
 

@@ -18,6 +18,10 @@ ul.story__items {
   padding: 0;
 }
 
+ul.story__items.current {
+  display: block;
+}
+
 .story__item {
   display: none;
 }
