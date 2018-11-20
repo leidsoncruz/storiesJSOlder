@@ -1,6 +1,18 @@
+
+.progresses-bars{
+  position: absolute;
+  display: flex;
+  flex-direction: row;
+  top: 20;
+  width: 100%;
+  left: 0;
+}
+
 .progress-bar {
     width: 100%;
     background-color: grey;
+    flex: 1;
+    margin: 0 10px;
 }
 
 .mybar {

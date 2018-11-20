@@ -1,0 +1,17 @@
+{
+  "name": "stories.js",
+  "version": "1.0.0",
+  "description": "A javascript library for add in your project",
+  "main": "index.js",
+  "repository": "",
+  "author": "<Leidson Cruz> leidson89@gmail.com",
+  "license": "MIT",
+  "scripts": {
+    "start": "webpack --config webpack.config.js",
+    "build": "webpack"
+
+  },
+  "devDependencies": {
+    "webpack": "^4.26.0"
+  }
+}

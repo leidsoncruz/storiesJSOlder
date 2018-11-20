@@ -1,6 +1,7 @@
 class Stories {
   constructor(){
     this.currentElPost = '';
+    this.currentDataIndex = 0;
   }
 
   init() {
@@ -13,12 +14,14 @@ class Stories {
   }
 
   playStories(element) {
-    console.log('Play story', element.getElementsByClassName('active'));
+    console.log('Play story');
 
     element.classList.add('current');
 
     if(element.getElementsByClassName('active').length <= 0){
-      element.getElementsByTagName('li')[0].classList.add('active');
+      const li = element.getElementsByTagName('li')[0];
+      li.classList.add('active');
+      this.currentDataIndex = li.getAttribute('data-index');
       screenfull.request(element);
     }
 
@@ -27,16 +30,16 @@ class Stories {
 
   startProgress() {
     console.log('Start progress');
+
     var width = 1;
-
-    const progressElement = this.currentElPost.getElementsByClassName('mybar')[0];
-    const id = setInterval(frame, 30);
-
     const me = this;
+    const progressElement = this.currentElPost.querySelector(`.progress-bar[data-index="${this.currentDataIndex}"] > .mybar`);
+
+    const id = setInterval(frame, 30);
 
     function frame() {
       if (width >= 100) {
-        clearInterval(id);
+        clearInterval(id);        
         me.nextItem();
       } else {
         width++;
@@ -52,6 +55,7 @@ class Stories {
     if(nextItem && nextItem.tagName == 'LI'){
       activeItem.classList.remove('active');
       nextItem.classList.add('active');
+      this.currentDataIndex = nextItem.getAttribute('data-index');
       this.startProgress()
       console.log('Nevegando');
     }else{
@@ -74,8 +78,3 @@ class Stories {
 
 const story = new Stories();
 story.init();
-
-
-function move() {
-
-}
