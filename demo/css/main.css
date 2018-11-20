@@ -14,10 +14,16 @@
 
 ul.story__items {
   list-style: none;
+  display: none;
+  padding: 0;
 }
 
 .story__item {
-  position: relative;
+  display: none;
+}
+
+.story__item.active{
+  display: block;
 }
 
 .story__item > span {
