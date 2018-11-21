@@ -2,15 +2,19 @@ class Stories {
   constructor(){
     this.currentElPost = '';
     this.currentDataIndex = 0;
+    this.init();
   }
 
   init() {
-    const btn = document.getElementById('btnFull');
+    const stories = document.getElementsByClassName('story');
     const me = this;
-    btn.addEventListener('click', function() {
-      me.currentElPost = document.getElementsByClassName('story__items')[0];
-      me.playStories(me.currentElPost)
-    })
+    for(var i=0; i<= stories.length-1; i++){
+      stories[i].addEventListener('click', function() {
+        me.currentElPost = this.getElementsByClassName('story__items')[0];
+        me.playStories(me.currentElPost)
+      })
+    }
+
   }
 
   playStories(element) {
@@ -31,7 +35,7 @@ class Stories {
   startProgress() {
     console.log('Start progress');
 
-    var width = 1;
+    var width = 0;
     const me = this;
     const progressElement = this.currentElPost.querySelector(`.progress-bar[data-index="${this.currentDataIndex}"] > .mybar`);
 
@@ -39,7 +43,7 @@ class Stories {
 
     function frame() {
       if (width >= 100) {
-        clearInterval(id);        
+        clearInterval(id);
         me.nextItem();
       } else {
         width++;
@@ -77,4 +81,3 @@ class Stories {
 }
 
 const story = new Stories();
-story.init();
