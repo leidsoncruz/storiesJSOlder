@@ -82,3 +82,7 @@ ul.story__items.current {
   color: white;
   font-size: 30px;
 }
+
+.story__item > img {
+  height: 100%;
+}

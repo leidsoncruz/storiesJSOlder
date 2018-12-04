@@ -12,17 +12,22 @@ class Stories {
   }
 
   clickActiveItem(){
+    const me = this;
     const stories = document.querySelectorAll('.story__item');
     for(var i=0; i<=stories.length-1; i++){
       stories[i].addEventListener('touchstart', function(){
         console.log('[TOUCH START] ACTIVE ITEM');
-
+        clearInterval(me.id);
         const legenda = this.querySelector('span');
         legenda.style.display="none";
       }, false);
 
       stories[i].addEventListener("touchend", function(){
         console.log('[TOUCH END] ACTIVE ITEM');
+        const progressBar = this.parentElement.querySelector(`.progress-bar[data-index="${me.currentDataIndex}"]`);
+        const currentProgressWidth = progressBar.querySelector('.mybar').style.width;
+
+        me.startProgress(parseInt(currentProgressWidth));
 
         const legenda = this.querySelector('span');
         legenda.style.display="block";
@@ -97,12 +102,11 @@ class Stories {
     this.startProgress();
   }
 
-  startProgress() {
+  startProgress(width=0) {
     console.log('[START] PROGRESS');
 
     clearInterval(this.id);
 
-    var width = 0;
     const me = this;
     const progressElement = this.currentElPost.querySelector(`.progress-bar[data-index="${this.currentDataIndex}"] > .mybar`);
 
