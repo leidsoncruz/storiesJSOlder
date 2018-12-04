@@ -21,8 +21,41 @@
     background-color: green;
 }
 
+.close {
+  color: white;
+  position: absolute;
+  top: 80;
+  right: 10;
+}
 
-.story > .story__cover > img { width: 200px;}
+.post-stories {
+  display: flex;
+  flex-direction: row;
+}
+
+.story{
+  flex: 1;
+  margin: 5px;
+
+}
+
+.story > .story__items > .btn-prev {
+  height: 100%;
+  width: 10%;
+  background: transparent;
+  position: absolute;
+  left: 0;
+}
+
+.story > .story__items > .btn-next {
+  height: 100%;
+  width: 10%;
+  background: transparent;
+  position: absolute;
+  right: 0;
+}
+
+.story > .story__cover > img { width: 40%;}
 
 ul.story__items {
   list-style: none;

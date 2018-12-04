@@ -2,19 +2,84 @@ class Stories {
   constructor(){
     this.currentElPost = '';
     this.currentDataIndex = 0;
-    this.init();
+    this.bindOpenClick();
+    this.bindBtnNextItem();
+    this.bindBtnPrevItem();
+    this.bindBtnClose();
+    this.changeScreen();
+    this.clickActiveItem();
+    this.id = 0;
   }
 
-  init() {
-    const stories = document.getElementsByClassName('story');
-    const me = this;
-    for(var i=0; i<= stories.length-1; i++){
-      stories[i].addEventListener('click', function() {
-        me.currentElPost = this.getElementsByClassName('story__items')[0];
-        me.playStories(me.currentElPost)
-      })
+  clickActiveItem(){
+    const stories = document.querySelectorAll('.story__item');
+    for(var i=0; i<=stories.length-1; i++){
+      stories[i].addEventListener('touchstart', function(){
+        console.log('[TOUCH START] ACTIVE ITEM');
+
+        const legenda = this.querySelector('span');
+        legenda.style.display="none";
+      }, false);
+
+      stories[i].addEventListener("touchend", function(){
+        console.log('[TOUCH END] ACTIVE ITEM');
+
+        const legenda = this.querySelector('span');
+        legenda.style.display="block";
+      }, false);
+
     }
 
+  }
+
+  changeScreen(){
+    screenfull.on('change', () => {
+      if(!screenfull.isFullscreen) this.exit();
+	  });
+  }
+
+  bindBtnClose(){
+    const btnsCloseItem = document.querySelectorAll('.story__items > .close > span');
+    const me = this;
+
+    for(var i=0;i<=btnsCloseItem.length-1;i++){
+      btnsCloseItem[i].addEventListener('click', function(){
+        me.exit();
+      });
+    };
+
+  }
+
+  bindBtnNextItem(){
+    const btnsNextItem = document.querySelectorAll('.story > .story__items > .btn-next');
+    const me = this;
+    for(var i=0; i<= btnsNextItem.length-1; i++){
+      btnsNextItem[i].addEventListener('click', function(){
+        me.nextItem();
+      })
+    }
+  }
+
+  bindBtnPrevItem(){
+    const btnsPrevItem = document.querySelectorAll('.story > .story__items > .btn-prev');
+    const me = this;
+    for(var i=0; i<= btnsPrevItem.length-1; i++){
+      btnsPrevItem[i].addEventListener('click', function(){
+        me.prevItem();
+      })
+    }
+  }
+
+  bindOpenClick() {
+    const stories = document.getElementsByClassName('story__cover');
+    const me = this;
+
+    for(var i=0; i<= stories.length-1; i++){
+      stories[i].addEventListener('click', function() {
+        me.currentElPost = this.parentNode.getElementsByClassName('story__items')[0];
+        me.playStories(me.currentElPost)
+      });
+    };
   }
 
   playStories(element) {
@@ -33,18 +98,20 @@ class Stories {
   }
 
   startProgress() {
-    console.log('Start progress');
+    console.log('[START] PROGRESS');
+
+    clearInterval(this.id);
 
     var width = 0;
     const me = this;
     const progressElement = this.currentElPost.querySelector(`.progress-bar[data-index="${this.currentDataIndex}"] > .mybar`);
 
-    const id = setInterval(frame, 30);
+    this.id = setInterval(frame, 30);
 
     function frame() {
       if (width >= 100) {
-        clearInterval(id);
-        me.nextItem();
+        clearInterval(me.id);
+        // me.nextItem();
       } else {
         width++;
         progressElement.style.width = width + '%';
@@ -52,29 +119,55 @@ class Stories {
     }
   }
 
-  nextItem(progress) {
+  prevItem() {
+    console.log('[CLICK] PREVIOUS ITEM');
+    const activeItem = document.querySelector('li.story__item.active');
+    const prevItem = activeItem.previousElementSibling;
+
+    const progressElement = this.currentElPost.querySelector(`.progress-bar[data-index="${this.currentDataIndex}"] > .mybar`);
+    progressElement.style.width = '0%';
+
+    if(prevItem && prevItem.tagName == 'LI'){
+      activeItem.classList.remove('active');
+      prevItem.classList.add('active');
+      this.currentDataIndex = prevItem.getAttribute('data-index');
+      console.log('[NAVEGANDO] PREVIOUS');
+      this.startProgress()
+    }else{
+      this.exit();
+    }
+  }
+
+  nextItem() {
+    console.log('[CLICK] NEXT ITEM');
     const activeItem = document.querySelector('li.story__item.active');
     const nextItem = activeItem.nextElementSibling;
+
+    const progressElement = this.currentElPost.querySelector(`.progress-bar[data-index="${this.currentDataIndex}"] > .mybar`);
+    progressElement.style.width = '100%';
 
     if(nextItem && nextItem.tagName == 'LI'){
       activeItem.classList.remove('active');
       nextItem.classList.add('active');
       this.currentDataIndex = nextItem.getAttribute('data-index');
+      console.log('[NAVEGANDO] NEXT');
       this.startProgress()
-      console.log('Nevegando');
     }else{
       this.exit();
     }
-
   }
 
   exit(){
-    console.log('Saindo');
+    if(this.id) clearInterval(this.id);
     const activeStory = document.querySelector('li.story__item.active');
-    const parentActive = activeStory.parentElement;
-    activeStory.classList.remove('active');
-    parentActive.classList.remove('current');
-    screenfull.exit();
+    if(activeStory){
+      console.log('[EXIT] SAINDO');
+      const parentActive = activeStory.parentElement;
+      activeStory.classList.remove('active');
+      parentActive.classList.remove('current');
+      screenfull.exit();
+    }
+
   }
 
 
