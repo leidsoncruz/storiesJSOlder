@@ -22,7 +22,25 @@ class Stories {
         legenda.style.display="none";
       }, false);
 
+      stories[i].addEventListener('mousedown', function(){
+        console.log('[TOUCH START] ACTIVE ITEM');
+        clearInterval(me.id);
+        const legenda = this.querySelector('span');
+        legenda.style.display="none";
+      }, false);
+
       stories[i].addEventListener("touchend", function(){
+        console.log('[TOUCH END] ACTIVE ITEM');
+        const progressBar = this.parentElement.querySelector(`.progress-bar[data-index="${me.currentDataIndex}"]`);
+        const currentProgressWidth = progressBar.querySelector('.mybar').style.width;
+
+        me.startProgress(parseInt(currentProgressWidth));
+
+        const legenda = this.querySelector('span');
+        legenda.style.display="block";
+      }, false);
+
+      stories[i].addEventListener("mouseup", function(){
         console.log('[TOUCH END] ACTIVE ITEM');
         const progressBar = this.parentElement.querySelector(`.progress-bar[data-index="${me.currentDataIndex}"]`);
         const currentProgressWidth = progressBar.querySelector('.mybar').style.width;
@@ -115,7 +133,7 @@ class Stories {
     function frame() {
       if (width >= 100) {
         clearInterval(me.id);
-        // me.nextItem();
+        me.nextItem();
       } else {
         width++;
         progressElement.style.width = width + '%';
