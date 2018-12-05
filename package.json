@@ -8,9 +8,12 @@
   "license": "MIT",
   "scripts": {
     "start": "webpack-dev-server --mode=development",
-    "build": "webpack --config ./webpack.config.js --mode=production"
+    "build": "webpack --config ./webpack.config.js --mode=production",
+    "test": "mocha src/tests"
   },
   "devDependencies": {
+    "assert": "^1.4.1",
+    "mocha": "^5.2.0",
     "webpack": "^4.27.0",
     "webpack-cli": "^3.1.2",
     "webpack-dev-server": "^3.1.10"

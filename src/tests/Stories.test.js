@@ -1,1 +1,1 @@
-import Stories from '../js/Stories';
+const assert = require('assert');
