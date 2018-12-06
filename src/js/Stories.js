@@ -1,7 +1,8 @@
-const Stories = (wrapper, options) => {
+var Stories2 = (wrapper, options) => {
   let currentElPost = '';
   let currentDataIndex = 0;
   let id = 0;
+  const d = document;
 
   const get = (param) => {
     if(!param) return false;
@@ -28,6 +29,30 @@ const Stories = (wrapper, options) => {
     }
   }
 
+  const renderStory = (story) => {
+    return `<div class="story"><div class="story__cover"> <img src=${story.preview} alt="${story.title}" /> </div> <ul class="story__items"> <div class="btn-prev"></div> <div class="btn-next"></div> <div class="progresses-bars"> ${renderProgress(story.slides.length)} </div> <div class="close"> <span>X</span> </div> ${story.slides.map(renderStoryItem)} </ul> </div>`;
+  }
+
+  const renderProgress = (totalBars) => {
+    return Array(totalBars + 1).join(1).split('').map((x, i) => i).map(function(index, bar){
+      return `<div class="progress-bar" data-index="${index+1}"> <div class="mybar"></div></div>`
+    });
+  }
+
+  const renderStoryItem = (storyItem, index) => {
+    return `<li class="story__item" data-index="${index+1}"> <img src=${storyItem.src}  /> <span>${storyItem.title}</span> </li>`;
+  }
+
+  const render = () => {
+    const div = d.createElement("div");
+    div.className = "post-stories";
+
+    const html = `${get('stories').map(renderStory).join('')}`;
+    console.log('alsjsa', html);
+    div.innerHTML = html;
+    wrapper.appendChild(div);
+  }
+
   const openStory = () => {
     currentElPost = this.parentNode.getElementsByClassName('story__items')[0];
     playStories(currentElPost);
@@ -49,6 +74,57 @@ const Stories = (wrapper, options) => {
         width++;
         progressElement.style.width = width + '%';
       }
+    }
+  }
+
+  const prevSlide = () => {
+    console.log('[CLICK] PREVIOUS ITEM');
+    const activeItem = document.querySelector('li.story__item.active');
+    const prevItem = activeItem.previousElementSibling;
+    const progressElement = currentElPost.querySelector(`.progress-bar[data-index="${currentDataIndex}"] > .mybar`);
+
+    progressElement.style.width = '0%';
+
+    if(prevItem && prevItem.tagName == 'LI'){
+      activeItem.classList.remove('active');
+      prevItem.classList.add('active');
+      currentDataIndex = prevItem.getAttribute('data-index');
+      console.log('[NAVEGANDO] PREVIOUS');
+      startProgress()
+    }else{
+      exit();
+    }
+  }
+
+  const nextSlide = () => {
+    console.log('[CLICK] NEXT ITEM');
+    const activeItem = document.querySelector('li.story__item.active');
+    const nextItem = activeItem.nextElementSibling;
+    const progressElement = currentElPost.querySelector(`.progress-bar[data-index="${currentDataIndex}"] > .mybar`);
+
+    progressElement.style.width = '100%';
+
+    if(nextItem && nextItem.tagName == 'LI'){
+      activeItem.classList.remove('active');
+      nextItem.classList.add('active');
+      currentDataIndex = nextItem.getAttribute('data-index');
+      console.log('[NAVEGANDO] NEXT');
+      startProgress()
+    }else{
+      exit();
+    }
+  }
+
+  const exit = () => {
+    if(id) clearInterval(id);
+    const activeStory = document.querySelector('li.story__item.active');
+
+    if(activeStory){
+      console.log('[EXIT] SAINDO');
+      const parentActive = activeStory.parentElement;
+      activeStory.classList.remove('active');
+      parentActive.classList.remove('current');
+      screenfull.exit();
     }
   }
 
@@ -118,7 +194,8 @@ const Stories = (wrapper, options) => {
   }
 
 
+  render();
 
 };
 
-export default Stories;
+// export default Stories;
