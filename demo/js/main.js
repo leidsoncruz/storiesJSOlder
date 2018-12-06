@@ -18,15 +18,26 @@ class Stories {
       stories[i].addEventListener('touchstart', function(){
         console.log('[TOUCH START] ACTIVE ITEM');
         clearInterval(me.id);
+
         const legenda = this.querySelector('span');
+        const progressBar = this.parentNode.querySelector('.progresses-bars');
+        const close = this.parentNode.querySelector('.close');
+
+        progressBar.style.display="none";
         legenda.style.display="none";
+        close.style.display="none";
       }, false);
 
       stories[i].addEventListener('mousedown', function(){
         console.log('[TOUCH START] ACTIVE ITEM');
         clearInterval(me.id);
         const legenda = this.querySelector('span');
+        const progressBar = this.parentNode.querySelector('.progresses-bars');
+        const close = this.parentNode.querySelector('.close');
+
+        progressBar.style.display="none";
         legenda.style.display="none";
+        close.style.display="none";
       }, false);
 
       stories[i].addEventListener("touchend", function(){
@@ -37,7 +48,11 @@ class Stories {
         me.startProgress(parseInt(currentProgressWidth));
 
         const legenda = this.querySelector('span');
-        legenda.style.display="block";
+        const close = this.parentNode.querySelector('.close');
+
+        progressBar.parentNode.removeAttribute('style');
+        legenda.removeAttribute('style');
+        close.removeAttribute('style');
       }, false);
 
       stories[i].addEventListener("mouseup", function(){
@@ -48,7 +63,11 @@ class Stories {
         me.startProgress(parseInt(currentProgressWidth));
 
         const legenda = this.querySelector('span');
-        legenda.style.display="block";
+        const close = this.parentNode.querySelector('.close');
+
+        progressBar.parentNode.removeAttribute('style');
+        legenda.removeAttribute('style');
+        close.removeAttribute('style');
       }, false);
 
     }
@@ -133,7 +152,7 @@ class Stories {
     function frame() {
       if (width >= 100) {
         clearInterval(me.id);
-        me.nextItem();
+        // me.nextItem();
       } else {
         width++;
         progressElement.style.width = width + '%';

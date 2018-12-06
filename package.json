@@ -9,10 +9,11 @@
   "scripts": {
     "start": "webpack-dev-server --mode=development",
     "build": "webpack --config ./webpack.config.js --mode=production",
-    "test": "mocha src/tests"
+    "test": "mocha src/tests -r esm"
   },
   "devDependencies": {
     "assert": "^1.4.1",
+    "esm": "^3.0.84",
     "mocha": "^5.2.0",
     "webpack": "^4.27.0",
     "webpack-cli": "^3.1.2",
