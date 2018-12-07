@@ -1,12 +1,20 @@
-var Stories2 = (wrapper, options) => {
+var StoriesJS = (wrapper, options) => {
   let currentElPost = '';
   let currentDataIndex = 0;
   let id = 0;
   const d = document;
 
+  const optionsDefault = {
+    stories: []
+  };
+
   const get = (param) => {
     if(!param) return false;
-    return options[param] || null;
+    try {
+      return options[param];
+    } catch (e) {
+      return optionsDefault[param] || null;
+    }
   }
 
   const bindElementsWithFn = (arrElements, event, fn) => {
@@ -48,9 +56,15 @@ var Stories2 = (wrapper, options) => {
     div.className = "post-stories";
 
     const html = `${get('stories').map(renderStory).join('')}`;
-    console.log('alsjsa', html);
+
     div.innerHTML = html;
-    wrapper.appendChild(div);
+
+    if(d.querySelector(wrapper)){
+      wrapper.appendChild(div);
+    }else{
+      d.body.appendChild(div);
+    }
+
   }
 
   const openStory = () => {
@@ -198,4 +212,5 @@ var Stories2 = (wrapper, options) => {
 
 };
 
-// export default Stories;
+
+export default StoriesJS;

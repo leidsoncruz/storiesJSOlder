@@ -1,9 +1,22 @@
 const path = require('path');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const CleanWebpackPlugin = require('clean-webpack-plugin');
 
 module.exports = {
-    entry: './src/js/Stories.js',
-    output: {
-      filename: 'bundle.js',
-      path: path.resolve(__dirname, './dist')
-    }
+  mode: 'development',
+  entry: './src/js/Stories.js',
+  plugins: [
+    new CleanWebpackPlugin(['dist']),
+    new HtmlWebpackPlugin({
+      title: 'Development'
+    })
+  ],
+  output: {
+    filename: '[name].bundle.js',
+    path: path.resolve(__dirname, 'dist')
+  },
+  devServer: {
+    contentBase: './dist',
+    port: 8000
+  }
 };
