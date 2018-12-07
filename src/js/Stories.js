@@ -1,3 +1,5 @@
+import screenfull from 'screenfull';
+
 var StoriesJS = (wrapper, options) => {
   let currentElPost = '';
   let currentDataIndex = 0;
@@ -5,7 +7,10 @@ var StoriesJS = (wrapper, options) => {
   const d = document;
 
   const optionsDefault = {
-    stories: []
+    stories: [],
+    callbacks: {
+      openStory: (currentElPost) => {console.log('foi', currentElPost)},
+    }
   };
 
   const get = (param) => {
@@ -17,10 +22,14 @@ var StoriesJS = (wrapper, options) => {
     }
   }
 
+  const transformer = (data) => {
+    return {...data};
+  }
+
   const bindElementsWithFn = (arrElements, event, fn) => {
     for(var i=0;i<=arrElements.length-1;i++){
       arrElements[i].addEventListener(event, function(){
-        fn();
+        fn(this);
       });
     };
   }
@@ -67,15 +76,21 @@ var StoriesJS = (wrapper, options) => {
 
   }
 
-  const openStory = () => {
-    currentElPost = this.parentNode.getElementsByClassName('story__items')[0];
+  const bindOpenStory = () => {
+    const stories = document.getElementsByClassName('story__cover');
+    bindElementsWithFn(stories, 'click', openStory);
+  }
+
+  const openStory = (element) => {
+    currentElPost = element.parentNode.getElementsByClassName('story__items')[0];
     playStories(currentElPost);
+    get('callbacks')['openStory'](currentElPost);
   }
 
   const startProgress = (width=0) => {
     console.log('[START] PROGRESS');
 
-    const progressElement = currentElPost.querySelector(`.progress-bar[data-index="${this.currentDataIndex}"] > .mybar`);
+    const progressElement = currentElPost.querySelector(`.progress-bar[data-index="${currentDataIndex}"] > .mybar`);
 
     clearInterval(id);
     id = setInterval(frame, 30);
@@ -89,6 +104,11 @@ var StoriesJS = (wrapper, options) => {
         progressElement.style.width = width + '%';
       }
     }
+  }
+
+  const bindBtnsPrevSlide = () => {
+    const btnsPrevSlide = document.querySelectorAll('.story > .story__items > .btn-next');
+    bindElementsWithFn(btnsPrevSlide, 'click', prevSlide);
   }
 
   const prevSlide = () => {
@@ -110,6 +130,11 @@ var StoriesJS = (wrapper, options) => {
     }
   }
 
+  const bindBtnsNextSlide = () => {
+    const btnsNextSlide = document.querySelectorAll('.story > .story__items > .btn-next');
+    bindElementsWithFn(btnsNextSlide, 'click', nextSlide);
+  }
+
   const nextSlide = () => {
     console.log('[CLICK] NEXT ITEM');
     const activeItem = document.querySelector('li.story__item.active');
@@ -127,6 +152,11 @@ var StoriesJS = (wrapper, options) => {
     }else{
       exit();
     }
+  }
+
+  const bindBtnsCloseSlide = () => {
+    const btnsCloseSlide = document.querySelectorAll('.story__items > .close > span');
+    bindElementsWithFn(btnsCloseSlide, 'click', exit);
   }
 
   const exit = () => {
@@ -172,26 +202,6 @@ var StoriesJS = (wrapper, options) => {
 	  });
   }
 
-  const bindOpenStory = () => {
-    const stories = document.getElementsByClassName('story__cover');
-    bindElementsWithFn(stories, 'click', openStory);
-  }
-
-  const bindBtnsCloseSlide = () => {
-    const btnsCloseSlide = document.querySelectorAll('.story__items > .close > span');
-    bindElementsWithFn(btnsCloseSlide, 'click', exit);
-  }
-
-  const bindBtnsNextSlide = () => {
-    const btnsNextSlide = document.querySelectorAll('.story > .story__items > .btn-next');
-    bindElementsWithFn(btnsNextSlide, 'click', nextSlide);
-  }
-
-  const bindBtnsPrevSlide = () => {
-    const btnsPrevSlide = document.querySelectorAll('.story > .story__items > .btn-next');
-    bindElementsWithFn(btnsPrevSlide, 'click', prevSlide);
-  }
-
   const playStories = (element) => {
     console.log('Play story');
 
@@ -207,10 +217,17 @@ var StoriesJS = (wrapper, options) => {
     startProgress();
   }
 
-
   render();
-
+  bindOpenStory();
 };
 
+const opt = {
+  stories: [{title: 'poe', preview: 'https://raw.githubusercontent.com/ramon82/assets/master/zuck.js/stories/1.jpg', slides:[{title: 't1', src: "https://raw.githubusercontent.com/ramon82/assets/master/zuck.js/stories/1.jpg"}]}, {title: 'po2', preview: 'https://raw.githubusercontent.com/ramon82/assets/master/zuck.js/stories/1.jpg', slides:[{title: 't2', src: "https://raw.githubusercontent.com/ramon82/assets/master/zuck.js/stories/1.jpg"}]}],
+  callbacks: {
+    openStory: (currentElPost) => {console.log('foi2', currentElPost)},
+  }
+};
+
+StoriesJS(null, opt);
 
 export default StoriesJS;

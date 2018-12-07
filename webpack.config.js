@@ -7,9 +7,7 @@ module.exports = {
   entry: './src/js/Stories.js',
   plugins: [
     new CleanWebpackPlugin(['dist']),
-    new HtmlWebpackPlugin({
-      title: 'Development'
-    })
+    new HtmlWebpackPlugin()
   ],
   output: {
     filename: '[name].bundle.js',
