@@ -125,8 +125,7 @@ class Stories {
   }
 
   playStories(element) {
-    console.log('Play story');
-
+    console.log('Play story');    
     element.classList.add('current');
 
     if(element.getElementsByClassName('active').length <= 0){

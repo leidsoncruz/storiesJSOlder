@@ -1,5 +1,6 @@
 import screenfull from 'screenfull';
 
+
 var StoriesJS = (wrapper, options) => {
   let currentElPost = '';
   let currentDataIndex = 0;
@@ -9,7 +10,7 @@ var StoriesJS = (wrapper, options) => {
   const optionsDefault = {
     stories: [],
     callbacks: {
-      openStory: (currentElPost) => {console.log('foi', currentElPost)},
+      openStory: (currentElPost) => {},
     }
   };
 
@@ -34,6 +35,33 @@ var StoriesJS = (wrapper, options) => {
     };
   }
 
+  const bindOpenStory = () => {
+    const stories = document.getElementsByClassName('story__cover');
+    bindElementsWithFn(stories, 'click', openStory);
+  }
+
+  const bindBtnsPrevSlide = () => {
+    const btnsPrevSlide = document.querySelectorAll('.story > .story__items > .btn-next');
+    bindElementsWithFn(btnsPrevSlide, 'click', prevSlide);
+  }
+
+  const bindBtnsNextSlide = () => {
+    const btnsNextSlide = document.querySelectorAll('.story > .story__items > .btn-next');
+    bindElementsWithFn(btnsNextSlide, 'click', nextSlide);
+  }
+
+  const bindBtnsCloseSlide = () => {
+    const btnsCloseSlide = document.querySelectorAll('.story__items > .btn-close > span');
+    bindElementsWithFn(btnsCloseSlide, 'click', exit);
+  }
+
+  const initBindMyEvents = () => {
+    bindOpenStory();
+    bindBtnsPrevSlide();
+    bindBtnsNextSlide();
+    bindBtnsCloseSlide();
+  }
+
   const hideElements = (arrElements) => {
     for(var i=0; i<=arrElements.length-1; i++){
       arrElements[i].style.display = "none";
@@ -47,7 +75,7 @@ var StoriesJS = (wrapper, options) => {
   }
 
   const renderStory = (story) => {
-    return `<div class="story"><div class="story__cover"> <img src=${story.preview} alt="${story.title}" /> </div> <ul class="story__items"> <div class="btn-prev"></div> <div class="btn-next"></div> <div class="progresses-bars"> ${renderProgress(story.slides.length)} </div> <div class="close"> <span>X</span> </div> ${story.slides.map(renderStoryItem)} </ul> </div>`;
+    return `<div class="story"><div class="story__cover"> <img src=${story.preview} alt="${story.title}" /> </div> <ul class="story__items"> <div class="btn-prev"></div> <div class="btn-next"></div> <div class="progresses-bars"> ${renderProgress(story.slides.length)} </div> <div class="btn-close"> <span>X</span> </div> ${story.slides.map(renderStoryItem)} </ul> </div>`;
   }
 
   const renderProgress = (totalBars) => {
@@ -76,15 +104,10 @@ var StoriesJS = (wrapper, options) => {
 
   }
 
-  const bindOpenStory = () => {
-    const stories = document.getElementsByClassName('story__cover');
-    bindElementsWithFn(stories, 'click', openStory);
-  }
-
   const openStory = (element) => {
     currentElPost = element.parentNode.getElementsByClassName('story__items')[0];
     playStories(currentElPost);
-    get('callbacks')['openStory'](currentElPost);
+    // get('callbacks')['openStory'](currentElPost);
   }
 
   const startProgress = (width=0) => {
@@ -98,17 +121,12 @@ var StoriesJS = (wrapper, options) => {
     function frame() {
       if (width >= 100) {
         clearInterval(id);
-        nextSlide();
+        // nextSlide();
       } else {
         width++;
         progressElement.style.width = width + '%';
       }
     }
-  }
-
-  const bindBtnsPrevSlide = () => {
-    const btnsPrevSlide = document.querySelectorAll('.story > .story__items > .btn-next');
-    bindElementsWithFn(btnsPrevSlide, 'click', prevSlide);
   }
 
   const prevSlide = () => {
@@ -130,11 +148,6 @@ var StoriesJS = (wrapper, options) => {
     }
   }
 
-  const bindBtnsNextSlide = () => {
-    const btnsNextSlide = document.querySelectorAll('.story > .story__items > .btn-next');
-    bindElementsWithFn(btnsNextSlide, 'click', nextSlide);
-  }
-
   const nextSlide = () => {
     console.log('[CLICK] NEXT ITEM');
     const activeItem = document.querySelector('li.story__item.active');
@@ -152,11 +165,6 @@ var StoriesJS = (wrapper, options) => {
     }else{
       exit();
     }
-  }
-
-  const bindBtnsCloseSlide = () => {
-    const btnsCloseSlide = document.querySelectorAll('.story__items > .close > span');
-    bindElementsWithFn(btnsCloseSlide, 'click', exit);
   }
 
   const exit = () => {
@@ -177,7 +185,7 @@ var StoriesJS = (wrapper, options) => {
 
     const legenda = this.querySelector('span');
     const progressBar = this.parentNode.querySelector('.progresses-bars');
-    const close = this.parentNode.querySelector('.close');
+    const close = this.parentNode.querySelector('.btn-close');
 
     clearInterval(id);
     hideElements([progressBar, legenda, close]);
@@ -190,7 +198,7 @@ var StoriesJS = (wrapper, options) => {
     const progressBar = this.parentElement.querySelector(`.progress-bar[data-index="${currentDataIndex}"]`);
     const currentProgressWidth = progressBar.querySelector('.mybar').style.width;
     const legenda = this.querySelector('span');
-    const close = this.parentNode.querySelector('.close');
+    const close = this.parentNode.querySelector('.btn-close');
 
     startProgress(parseInt(currentProgressWidth));
     removeAttributesFromElements([progressBar.parentNode, legenda, close], 'style');
@@ -218,14 +226,15 @@ var StoriesJS = (wrapper, options) => {
   }
 
   render();
-  bindOpenStory();
+  initBindMyEvents();
+
 };
 
 const opt = {
   stories: [{title: 'poe', preview: 'https://raw.githubusercontent.com/ramon82/assets/master/zuck.js/stories/1.jpg', slides:[{title: 't1', src: "https://raw.githubusercontent.com/ramon82/assets/master/zuck.js/stories/1.jpg"}]}, {title: 'po2', preview: 'https://raw.githubusercontent.com/ramon82/assets/master/zuck.js/stories/1.jpg', slides:[{title: 't2', src: "https://raw.githubusercontent.com/ramon82/assets/master/zuck.js/stories/1.jpg"}]}],
-  callbacks: {
-    openStory: (currentElPost) => {console.log('foi2', currentElPost)},
-  }
+  // callbacks: {
+  //   openStory: (currentElPost) => {console.log('foi2', currentElPost)},
+  // }
 };
 
 StoriesJS(null, opt);
