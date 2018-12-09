@@ -14,12 +14,17 @@ var StoriesJS = (wrapper, options) => {
     }
   };
 
+  const returnDefault = (param) => {
+    return optionsDefault[param] || null;
+  }
+
   const get = (param) => {
     if(!param) return false;
     try {
+      if(!options[param]) return returnDefault(param);
       return options[param];
     } catch (e) {
-      return optionsDefault[param] || null;
+      return returnDefault(param);
     }
   }
 
@@ -41,13 +46,25 @@ var StoriesJS = (wrapper, options) => {
   }
 
   const bindBtnsPrevSlide = () => {
-    const btnsPrevSlide = document.querySelectorAll('.story > .story__items > .btn-next');
+    const btnsPrevSlide = document.querySelectorAll('.story > .story__items > .btn-prev');
     bindElementsWithFn(btnsPrevSlide, 'click', prevSlide);
   }
 
   const bindBtnsNextSlide = () => {
     const btnsNextSlide = document.querySelectorAll('.story > .story__items > .btn-next');
     bindElementsWithFn(btnsNextSlide, 'click', nextSlide);
+  }
+
+  const bindDownSlide = () => {
+    const stories = document.querySelectorAll('.story__item');
+    bindElementsWithFn(stories, 'touchstart', onTouchStartActiveSlide);
+    bindElementsWithFn(stories, 'mousedown', onTouchStartActiveSlide);
+  }
+
+  const bindUpSlide = () => {
+    const stories = document.querySelectorAll('.story__item');
+    bindElementsWithFn(stories, 'touchend', onTouchEndActiveSlide);
+    bindElementsWithFn(stories, 'mouseup', onTouchEndActiveSlide);
   }
 
   const bindBtnsCloseSlide = () => {
@@ -60,6 +77,8 @@ var StoriesJS = (wrapper, options) => {
     bindBtnsPrevSlide();
     bindBtnsNextSlide();
     bindBtnsCloseSlide();
+    bindDownSlide();
+    bindUpSlide();
   }
 
   const hideElements = (arrElements) => {
@@ -107,7 +126,7 @@ var StoriesJS = (wrapper, options) => {
   const openStory = (element) => {
     currentElPost = element.parentNode.getElementsByClassName('story__items')[0];
     playStories(currentElPost);
-    // get('callbacks')['openStory'](currentElPost);
+    get('callbacks')['openStory'](currentElPost);
   }
 
   const startProgress = (width=0) => {
@@ -121,7 +140,7 @@ var StoriesJS = (wrapper, options) => {
     function frame() {
       if (width >= 100) {
         clearInterval(id);
-        // nextSlide();
+        nextSlide();
       } else {
         width++;
         progressElement.style.width = width + '%';
@@ -132,7 +151,8 @@ var StoriesJS = (wrapper, options) => {
   const prevSlide = () => {
     console.log('[CLICK] PREVIOUS ITEM');
     const activeItem = document.querySelector('li.story__item.active');
-    const prevItem = activeItem.previousElementSibling;
+    const prevItem = activeItem ? activeItem.previousElementSibling : null;
+
     const progressElement = currentElPost.querySelector(`.progress-bar[data-index="${currentDataIndex}"] > .mybar`);
 
     progressElement.style.width = '0%';
@@ -151,12 +171,12 @@ var StoriesJS = (wrapper, options) => {
   const nextSlide = () => {
     console.log('[CLICK] NEXT ITEM');
     const activeItem = document.querySelector('li.story__item.active');
-    const nextItem = activeItem.nextElementSibling;
+
+    const nextItem = activeItem ? activeItem.nextElementSibling : null;
     const progressElement = currentElPost.querySelector(`.progress-bar[data-index="${currentDataIndex}"] > .mybar`);
-
-    progressElement.style.width = '100%';
-
     if(nextItem && nextItem.tagName == 'LI'){
+      progressElement.style.width = '100%';
+
       activeItem.classList.remove('active');
       nextItem.classList.add('active');
       currentDataIndex = nextItem.getAttribute('data-index');
@@ -173,6 +193,7 @@ var StoriesJS = (wrapper, options) => {
 
     if(activeStory){
       console.log('[EXIT] SAINDO');
+      currentElPost.querySelector(`.progress-bar[data-index="${currentDataIndex}"] > .mybar`).style.width = '0%';
       const parentActive = activeStory.parentElement;
       activeStory.classList.remove('active');
       parentActive.classList.remove('current');
@@ -180,25 +201,25 @@ var StoriesJS = (wrapper, options) => {
     }
   }
 
-  const onTouchStartActiveSlide = () => {
+  const onTouchStartActiveSlide = (element) => {
     console.log('[TOUCH START] ACTIVE slide');
 
-    const legenda = this.querySelector('span');
-    const progressBar = this.parentNode.querySelector('.progresses-bars');
-    const close = this.parentNode.querySelector('.btn-close');
+    const legenda = element.querySelector('span');
+    const progressBar = element.parentNode.querySelector('.progresses-bars');
+    const close = element.parentNode.querySelector('.btn-close');
 
     clearInterval(id);
     hideElements([progressBar, legenda, close]);
 
   }
 
-  const onTouchEndActiveSlide = () => {
+  const onTouchEndActiveSlide = (element) => {
     console.log('[TOUCH END] ACTIVE ITEM');
 
-    const progressBar = this.parentElement.querySelector(`.progress-bar[data-index="${currentDataIndex}"]`);
+    const progressBar = element.parentElement.querySelector(`.progress-bar[data-index="${currentDataIndex}"]`);
     const currentProgressWidth = progressBar.querySelector('.mybar').style.width;
-    const legenda = this.querySelector('span');
-    const close = this.parentNode.querySelector('.btn-close');
+    const legenda = element.querySelector('span');
+    const close = element.parentNode.querySelector('.btn-close');
 
     startProgress(parseInt(currentProgressWidth));
     removeAttributesFromElements([progressBar.parentNode, legenda, close], 'style');
@@ -231,7 +252,8 @@ var StoriesJS = (wrapper, options) => {
 };
 
 const opt = {
-  stories: [{title: 'poe', preview: 'https://raw.githubusercontent.com/ramon82/assets/master/zuck.js/stories/1.jpg', slides:[{title: 't1', src: "https://raw.githubusercontent.com/ramon82/assets/master/zuck.js/stories/1.jpg"}]}, {title: 'po2', preview: 'https://raw.githubusercontent.com/ramon82/assets/master/zuck.js/stories/1.jpg', slides:[{title: 't2', src: "https://raw.githubusercontent.com/ramon82/assets/master/zuck.js/stories/1.jpg"}]}],
+  stories: [{title: 'poe', preview: 'http://localhost:8001/zuck_files/1.jpg', slides:
+  [{title: 't1', src: "http://localhost:8001/zuck_files/1.jpg"}, {title: 't2', src: "http://localhost:8001/zuck_files/8.jpg"}]}, {title: 'po2', preview: 'http://localhost:8001/zuck_files/2.jpg', slides:[{title: 't2', src: "http://localhost:8001/zuck_files/2.jpg"}]}],
   // callbacks: {
   //   openStory: (currentElPost) => {console.log('foi2', currentElPost)},
   // }
