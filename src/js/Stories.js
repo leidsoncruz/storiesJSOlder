@@ -11,6 +11,12 @@ var StoriesJS = (wrapper, options) => {
     stories: [],
     callbacks: {
       openStory: (currentElPost) => {},
+      prevSlide: (activeItem, prevItem) => {},
+      nextSlide: (activeItem, nextItem) => {},
+      onTouchStartActiveSlide: () => {},
+      onTouchEndActiveSlide: () => {},
+      exit: (activeItem) => {},
+      playStories: (story, activeItem) => {}
     }
   };
 
@@ -28,6 +34,16 @@ var StoriesJS = (wrapper, options) => {
     }
   }
 
+  const getCallBack = (param) => {
+    if(!param) return false;
+    try {
+      if(!options['callbacks'][param]) return () => {};
+      return options['callbacks'][param];
+    } catch (e) {
+      return () => {};
+    }
+  }
+
   const transformer = (data) => {
     return {...data};
   }
@@ -38,6 +54,24 @@ var StoriesJS = (wrapper, options) => {
         fn(this);
       });
     };
+  }
+
+  const hideElements = (arrElements) => {
+    for(var i=0; i<=arrElements.length-1; i++){
+      arrElements[i].style.display = "none";
+    }
+  }
+
+  const removeAttributesFromElements = (arrElements, attribute) => {
+    for(var i=0; i<=arrElements.length-1; i++){
+      arrElements[i].removeAttribute(attribute);
+    }
+  }
+
+  const changeScreen = () => {
+    screenfull.on('change', () => {
+      if(!screenfull.isFullscreen) exit();
+	  });
   }
 
   const bindOpenStory = () => {
@@ -81,52 +115,10 @@ var StoriesJS = (wrapper, options) => {
     bindUpSlide();
   }
 
-  const hideElements = (arrElements) => {
-    for(var i=0; i<=arrElements.length-1; i++){
-      arrElements[i].style.display = "none";
-    }
-  }
-
-  const removeAttributesFromElements = (arrElements, attribute) => {
-    for(var i=0; i<=arrElements.length-1; i++){
-      arrElements[i].removeAttribute(attribute);
-    }
-  }
-
-  const renderStory = (story) => {
-    return `<div class="story"><div class="story__cover"> <img src=${story.preview} alt="${story.title}" /> </div> <ul class="story__items"> <div class="btn-prev"></div> <div class="btn-next"></div> <div class="progresses-bars"> ${renderProgress(story.slides.length)} </div> <div class="btn-close"> <span>X</span> </div> ${story.slides.map(renderStoryItem)} </ul> </div>`;
-  }
-
-  const renderProgress = (totalBars) => {
-    return Array(totalBars + 1).join(1).split('').map((x, i) => i).map(function(index, bar){
-      return `<div class="progress-bar" data-index="${index+1}"> <div class="mybar"></div></div>`
-    });
-  }
-
-  const renderStoryItem = (storyItem, index) => {
-    return `<li class="story__item" data-index="${index+1}"> <img src=${storyItem.src}  /> <span>${storyItem.title}</span> </li>`;
-  }
-
-  const render = () => {
-    const div = d.createElement("div");
-    div.className = "post-stories";
-
-    const html = `${get('stories').map(renderStory).join('')}`;
-
-    div.innerHTML = html;
-
-    if(d.querySelector(wrapper)){
-      wrapper.appendChild(div);
-    }else{
-      d.body.appendChild(div);
-    }
-
-  }
-
   const openStory = (element) => {
     currentElPost = element.parentNode.getElementsByClassName('story__items')[0];
     playStories(currentElPost);
-    get('callbacks')['openStory'](currentElPost);
+    getCallBack('openStory')(currentElPost);
   }
 
   const startProgress = (width=0) => {
@@ -166,6 +158,8 @@ var StoriesJS = (wrapper, options) => {
     }else{
       exit();
     }
+
+    getCallBack('prevSlide')(activeItem, prevItem);
   }
 
   const nextSlide = () => {
@@ -185,20 +179,8 @@ var StoriesJS = (wrapper, options) => {
     }else{
       exit();
     }
-  }
 
-  const exit = () => {
-    if(id) clearInterval(id);
-    const activeStory = document.querySelector('li.story__item.active');
-
-    if(activeStory){
-      console.log('[EXIT] SAINDO');
-      currentElPost.querySelector(`.progress-bar[data-index="${currentDataIndex}"] > .mybar`).style.width = '0%';
-      const parentActive = activeStory.parentElement;
-      activeStory.classList.remove('active');
-      parentActive.classList.remove('current');
-      screenfull.exit();
-    }
+    getCallBack('nextSlide')(activeItem, nextItem);
   }
 
   const onTouchStartActiveSlide = (element) => {
@@ -210,7 +192,7 @@ var StoriesJS = (wrapper, options) => {
 
     clearInterval(id);
     hideElements([progressBar, legenda, close]);
-
+    getCallBack('onTouchStartActiveSlide')();
   }
 
   const onTouchEndActiveSlide = (element) => {
@@ -223,12 +205,7 @@ var StoriesJS = (wrapper, options) => {
 
     startProgress(parseInt(currentProgressWidth));
     removeAttributesFromElements([progressBar.parentNode, legenda, close], 'style');
-  }
-
-  const changeScreen = () => {
-    screenfull.on('change', () => {
-      if(!screenfull.isFullscreen) exit();
-	  });
+    getCallBack('onTouchEndActiveSlide')();
   }
 
   const playStories = (element) => {
@@ -244,9 +221,57 @@ var StoriesJS = (wrapper, options) => {
     }
 
     startProgress();
+    getCallBack('playStories')(element.parentElement, element.querySelector('li.active'));
+  }
+
+  const exit = () => {
+    if(id) clearInterval(id);
+    const activeStory = document.querySelector('li.story__item.active');
+
+    if(activeStory){
+      console.log('[EXIT] SAINDO');
+      currentElPost.querySelector(`.progress-bar[data-index="${currentDataIndex}"] > .mybar`).style.width = '0%';
+      const parentActive = activeStory.parentElement;
+      activeStory.classList.remove('active');
+      parentActive.classList.remove('current');
+      screenfull.exit();
+      getCallBack('exit')(activeStory);
+    }
+  }
+
+
+  const renderStory = (story) => {
+    return `<div class="story"><div class="story__cover"> <img src=${story.preview} alt="${story.title}" /> </div> <ul class="story__items"> <div class="btn-prev"></div> <div class="btn-next"></div> <div class="progresses-bars"> ${renderProgress(story.slides.length)} </div> <div class="btn-close"> <span>X</span> </div> ${story.slides.map(renderStoryItem)} </ul> </div>`;
+  }
+
+  const renderProgress = (totalBars) => {
+    return Array(totalBars + 1).join(1).split('').map((x, i) => i).map(function(index, bar){
+      return `<div class="progress-bar" data-index="${index+1}"> <div class="mybar"></div></div>`
+    });
+  }
+
+  const renderStoryItem = (storyItem, index) => {
+    return `<li class="story__item" data-index="${index+1}"> <img src=${storyItem.src}  /> <span>${storyItem.title}</span> </li>`;
+  }
+
+  const render = () => {
+    const div = d.createElement("div");
+    div.className = "post-stories";
+
+    const html = `${get('stories').map(renderStory).join('')}`;
+
+    div.innerHTML = html;
+
+    if(d.querySelector(wrapper)){
+      wrapper.appendChild(div);
+    }else{
+      d.body.appendChild(div);
+    }
+
   }
 
   render();
+  changeScreen();
   initBindMyEvents();
 
 };
@@ -254,9 +279,14 @@ var StoriesJS = (wrapper, options) => {
 const opt = {
   stories: [{title: 'poe', preview: 'http://localhost:8001/zuck_files/1.jpg', slides:
   [{title: 't1', src: "http://localhost:8001/zuck_files/1.jpg"}, {title: 't2', src: "http://localhost:8001/zuck_files/8.jpg"}]}, {title: 'po2', preview: 'http://localhost:8001/zuck_files/2.jpg', slides:[{title: 't2', src: "http://localhost:8001/zuck_files/2.jpg"}]}],
-  // callbacks: {
+  callbacks: {
+    // onTouchStartActiveSlide: () => {console.log('apertou');},
+    // onTouchEndActiveSlide: () => {console.log('saiu');},
+    // prevSlide: (activeItem, prevItem) => {console.log('fui', activeItem, prevItem);},
   //   openStory: (currentElPost) => {console.log('foi2', currentElPost)},
-  // }
+    // exit: (activeItem) => {console.log('saiu', activeItem);},
+    // playStories: (story, activeItem) => {console.log('vendo agr', story, activeItem);}
+  }
 };
 
 StoriesJS(null, opt);
