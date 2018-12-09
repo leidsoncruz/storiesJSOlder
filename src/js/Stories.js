@@ -258,6 +258,8 @@ var StoriesJS = (wrapper, options) => {
     const div = d.createElement("div");
     div.className = "post-stories";
 
+    options = get('transformer') ? get('transformer')(options) : transformer(options);
+
     const html = `${get('stories').map(renderStory).join('')}`;
 
     div.innerHTML = html;
@@ -286,7 +288,9 @@ const opt = {
   //   openStory: (currentElPost) => {console.log('foi2', currentElPost)},
     // exit: (activeItem) => {console.log('saiu', activeItem);},
     // playStories: (story, activeItem) => {console.log('vendo agr', story, activeItem);}
-  }
+  },
+  // transformer: (data) => {
+  // }
 };
 
 StoriesJS(null, opt);
