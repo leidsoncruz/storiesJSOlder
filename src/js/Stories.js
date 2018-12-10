@@ -159,7 +159,7 @@ const StoriesJS = (wrapper, options) => {
 
     clearInterval(id);
     id = setInterval(frame, 30);
-    getCallBack('currentSlide')(currentElPost, currentElPost.querySelector('.active'));
+    getCallBack('currentSlide')(currentElPost.parentNode, currentElPost.querySelector('.active'));
   };
 
   const prevSlide = () => {
@@ -279,7 +279,7 @@ const opt = {
     // openStory: (currentElPost) => {console.log('foi2', currentElPost)},
     // exit: (activeItem) => {console.log('saiu', activeItem);},
     // currentSlide: (story, activeItem) => {
-      // console.log('vendo agr', story, activeItem);
+    //   console.log('vendo agr', story.parentElement, activeItem);
     // }
   },
   // transformer: (data) => {
