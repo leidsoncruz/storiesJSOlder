@@ -7,6 +7,7 @@ const StoriesJS = (wrapper, options) => {
 
   const optionsDefault = {
     stories: [],
+    timer: 30,
   };
 
   const returnDefault = param => optionsDefault[param] || null;
@@ -142,23 +143,32 @@ const StoriesJS = (wrapper, options) => {
     getCallBack('nextSlide')(activeItem, nextItem);
   };
 
-  const startProgress = (width = 0) => {
+  const playVideo = (videoElement) => {
+    videoElement.play();
+  }
+
+  const startProgress = (width=0, timer=optionsDefault.timer) => {
+    console.log('[START] PROGRESS');
     const progressElement = currentElPost.querySelector(`.progress-bar[data-index="${currentDataIndex}"] > .mybar`);
+    clearInterval(id);
+
+    const contentElement = currentElPost.querySelector('.active').children[0];
+    contentElement.tagName==="VIDEO" ? playVideo(contentElement) : null;
+
+    const timeSlide = Math.floor(contentElement.duration)*10 || timer;
+
+    id = setInterval(frame, timeSlide);
 
     function frame() {
       if (width >= 100) {
         clearInterval(id);
-        nextSlide();
+        // nextSlide();
       } else {
         width += 1;
         progressElement.style.width = `${width}%`;
       }
     }
 
-    console.log('[START] PROGRESS');
-
-    clearInterval(id);
-    id = setInterval(frame, 30);
     getCallBack('currentSlide')(currentElPost.parentNode, currentElPost.querySelector('.active'));
   };
 
@@ -224,12 +234,32 @@ const StoriesJS = (wrapper, options) => {
     startProgress();
   };
 
-  const renderStoryItem = (storyItem, index) => `<li class="story__item" data-index="${index + 1}"> <img src=${storyItem.src}  /> <span>${storyItem.title}</span> </li>`;
+  const renderImage = (storyItem, index) => {
+    return `<li class="story__item" data-index="${index + 1}"> <img src=${storyItem.src} preload="metadata" /> <span>${storyItem.title}</span> </li>`
+  }
+
+  const renderVideo = (storyItem, index) => {
+    return `<li class="story__item" data-index="${index + 1}"><video src="${storyItem.src}"></video></li>`;
+  }
+
+
+  const renderFunctions = {
+    image: renderImage,
+    video: renderVideo
+  }
+
+  const renderStoryItem = (storyItem, index) => {
+    try {
+      return renderFunctions[storyItem.type](storyItem, index) || renderImage(storyItem, index);
+    } catch (e) {
+      return renderImage(storyItem, index);
+    }
+  };
 
   const renderProgress = totalBars => Array(totalBars + 1).join(1).split('').map((x, i) => i)
     .map(index => `<div class="progress-bar" data-index="${index + 1}"> <div class="mybar"></div></div>`);
 
-  const renderStory = story => `<div class="story"><div class="story__cover"> <img src=${story.preview} alt="${story.title}" /> </div> <ul class="story__items"> <div class="btn-prev"></div> <div class="btn-next"></div> <div class="progresses-bars"> ${renderProgress(story.slides.length)} </div> <div class="btn-close"> <span>X</span> </div> ${story.slides.map(renderStoryItem).join('')} </ul> </div>`;
+  const renderStory = story => `<div class="story"><div class="story__cover"> <img src=${story.preview || story.slides[0].preview || story.slides[0].src} alt="${story.title}" /> </div> <ul class="story__items"> <div class="btn-prev"></div> <div class="btn-next"></div> <div class="progresses-bars"> ${renderProgress(story.slides.length)} </div> <div class="btn-close"> <span>X</span> </div> ${story.slides.map(renderStoryItem).join('')} </ul> </div>`;
 
   const render = () => {
     const div = document.createElement('div');
@@ -256,20 +286,27 @@ const StoriesJS = (wrapper, options) => {
 const opt = {
   stories: [{
     title: 'poe',
-    preview: 'http://localhost:8001/zuck_files/1.jpg',
+    preview: 'https://raw.githubusercontent.com/ramon82/assets/master/zuck.js/stories/8.jpg',
     slides: [{
+      type: 'image',
       title: 't1',
-      src: 'http://localhost:8001/zuck_files/1.jpg'
+      src: 'https://raw.githubusercontent.com/ramon82/assets/master/zuck.js/stories/8.jpg'
     }, {
+      type: 'image',
       title: 't2',
-      src: 'http://localhost:8001/zuck_files/8.jpg'
+      src: 'https://raw.githubusercontent.com/ramon82/assets/master/zuck.js/stories/9.jpg'
     }],
   }, {
     title: 'po2',
-    preview: 'http://localhost:8001/zuck_files/2.jpg',
+    preview: '',
     slides: [{
+      type: 'video',
+      preview: 'https://raw.githubusercontent.com/ramon82/assets/master/zuck.js/stories/2.jpg',
       title: 't2',
-      src: 'http://localhost:8001/zuck_files/2.jpg'
+      src: 'https://raw.githubusercontent.com/ramon82/assets/master/zuck.js/stories/2.mp4'
+    }, {
+      title: 't2',
+      src: 'https://raw.githubusercontent.com/ramon82/assets/master/zuck.js/stories/6.jpg'
     }]
   }],
   callbacks: {
