@@ -4,10 +4,12 @@ const StoriesJS = (wrapper, options) => {
   let currentElPost = '';
   let currentDataIndex = 0;
   let id = 0;
+  let isVideo = false;
 
   const optionsDefault = {
     stories: [],
     timer: 30,
+    hiddenElements: true
   };
 
   const returnDefault = param => optionsDefault[param] || null;
@@ -15,7 +17,8 @@ const StoriesJS = (wrapper, options) => {
   const get = (param) => {
     if (!param) return false;
     try {
-      if (!options[param]) return returnDefault(param);
+      if (options[param] == null || options[param] == undefined) return returnDefault(param);
+
       return options[param];
     } catch (e) {
       return returnDefault(param);
@@ -47,6 +50,10 @@ const StoriesJS = (wrapper, options) => {
       arrElements[i].style.display = 'none';
     }
   };
+
+  const parseElements = (elements) => {
+    return elements.filter(item => item ? item : null);
+  }
 
   const removeAttributesFromElements = (arrElements, attribute) => {
     for (let i = 0; i <= arrElements.length - 1; i += 1) {
@@ -147,13 +154,19 @@ const StoriesJS = (wrapper, options) => {
     videoElement.play();
   }
 
+  const pauseVideo = (videoElement) => {
+    videoElement.pause();
+  }
+
   const startProgress = (width=0, timer=optionsDefault.timer) => {
     console.log('[START] PROGRESS');
+
     const progressElement = currentElPost.querySelector(`.progress-bar[data-index="${currentDataIndex}"] > .mybar`);
     clearInterval(id);
 
     const contentElement = currentElPost.querySelector('.active').children[0];
-    contentElement.tagName==="VIDEO" ? playVideo(contentElement) : null;
+    isVideo = contentElement.tagName==="VIDEO";
+    isVideo ? playVideo(contentElement) : null;
 
     const timeSlide = Math.floor(contentElement.duration)*10 || timer;
 
@@ -162,7 +175,7 @@ const StoriesJS = (wrapper, options) => {
     function frame() {
       if (width >= 100) {
         clearInterval(id);
-        // nextSlide();
+        nextSlide();
       } else {
         width += 1;
         progressElement.style.width = `${width}%`;
@@ -197,25 +210,35 @@ const StoriesJS = (wrapper, options) => {
   const onTouchStartActiveSlide = (element) => {
     console.log('[TOUCH START] ACTIVE slide');
 
-    const legenda = element.querySelector('span');
-    const progressBar = element.parentNode.querySelector('.progresses-bars');
-    const close = element.parentNode.querySelector('.btn-close');
+    //Extrair essa lógica para ser um event para não ficar processando toda vez
+    if(get('hiddenElements')){
+      const legenda = element.querySelector('span');
+      const progressBar = element.parentNode.querySelector('.progresses-bars');
+      const close = element.parentNode.querySelector('.btn-close');
+      hideElements(parseElements([progressBar, legenda, close]));
+    }
 
     clearInterval(id);
-    hideElements([progressBar, legenda, close]);
+
+    isVideo ? pauseVideo(currentElPost.querySelector('.active').children[0]) : null;
+
     getCallBack('onTouchStartActiveSlide')();
   };
 
   const onTouchEndActiveSlide = (element) => {
     console.log('[TOUCH END] ACTIVE ITEM');
-
     const progressBar = element.parentElement.querySelector(`.progress-bar[data-index="${currentDataIndex}"]`);
     const currentProgressWidth = progressBar.querySelector('.mybar').style.width;
-    const legenda = element.querySelector('span');
-    const close = element.parentNode.querySelector('.btn-close');
+
+
+    //Extrair essa lógica para ser um event para não ficar processando toda vez
+    if(get('hiddenElements')){
+      const legenda = element.querySelector('span');
+      const close = element.parentNode.querySelector('.btn-close');
+      removeAttributesFromElements(parseElements([progressBar.parentNode, legenda, close]), 'style');
+    }
 
     startProgress(parseInt(currentProgressWidth, 10));
-    removeAttributesFromElements([progressBar.parentNode, legenda, close], 'style');
     getCallBack('onTouchEndActiveSlide')();
   };
 
