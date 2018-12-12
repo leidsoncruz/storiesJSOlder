@@ -96,7 +96,7 @@ const StoriesJS = (wrapper, options) => {
 
   const bindBtnsCloseSlide = () => {
     const btnsCloseSlide = document.querySelectorAll('.story__items > .btn-close > span');
-    bindElementsWithFn(btnsCloseSlide, 'click', exit);
+    bindElementsWithFn(btnsCloseSlide, 'click', () => exit(true));
   };
 
   const initBindMyEvents = () => {
@@ -108,33 +108,78 @@ const StoriesJS = (wrapper, options) => {
     bindUpSlide();
   };
 
-  const openStory = (element) => {
+  const playVideo = (videoElement) => {
+    videoElement.play();
+  }
+
+  const pauseVideo = (videoElement) => {
+    videoElement.pause();
+  }
+
+  const stopVideo = (videoElement) => {
+    videoElement.pause();
+    videoElement.currentTime=0;
+  }
+
+  const toggleClass = (elements, _class) => {
+    for (let i = 0; i <= elements.length - 1; i += 1) {
+      elements[i].classList.toggle(_class);
+    }
+  }
+
+  const openStory = (element, addClass=true) => {
     currentElPost = element.parentNode.querySelector('.story__items');
+
+    const stories = element.parentElement.parentElement.querySelectorAll('.story__cover');
+    if(addClass) toggleClass(stories, 'hidden');
+
     playStories(currentElPost);
     getCallBack('openStory')(currentElPost);
   };
 
-  const exit = (callExitScreen=true) => {
-    if (id) clearInterval(id);
-    const activeStory = document.querySelector('li.story__item.active');
+  const prevSlide = () => {
+    console.log('[CLICK] PREVIOUS ITEM');
+    const activeItem = currentElPost.querySelector('li.story__item.active');
+    const prevItem = activeItem ? activeItem.previousElementSibling : null;
 
-    if (activeStory) {
-      console.log('[EXIT] SAINDO');
-      currentElPost.querySelector(`.progress-bar[data-index="${currentDataIndex}"] > .mybar`).style.width = '0%';
-      const parentActive = activeStory.parentElement;
-      activeStory.classList.remove('active');
-      parentActive.classList.remove('current');
-      if(callExitScreen) screenfull.exit();
-      getCallBack('exit')(activeStory);
+    const progressElement = currentElPost.querySelector(`.progress-bar[data-index="${currentDataIndex}"] > .mybar`);
+
+    progressElement.style.width = '0%';
+
+    if(isVideo){
+      const videoElement = activeItem.children[0];
+      stopVideo(videoElement);
     }
+
+    if (prevItem && prevItem.tagName === 'LI') {
+      activeItem.classList.remove('active');
+      prevItem.classList.add('active');
+      currentDataIndex = prevItem.getAttribute('data-index');
+      console.log('[NAVEGANDO] PREVIOUS');
+      startProgress();
+    } else {
+      exit();
+    }
+
+    getCallBack('prevSlide')(activeItem, prevItem);
   };
+
 
   const nextSlide = () => {
     console.log('[CLICK] NEXT ITEM');
-    const activeItem = document.querySelector('li.story__item.active');
+    const activeItem = currentElPost.querySelector('li.story__item.active');
 
     const nextItem = activeItem ? activeItem.nextElementSibling : null;
+
+    const nextStory = currentElPost.parentElement.nextElementSibling;
+
     const progressElement = currentElPost.querySelector(`.progress-bar[data-index="${currentDataIndex}"] > .mybar`);
+
+    if(isVideo){
+      const videoElement = activeItem.children[0];
+      stopVideo(videoElement);
+    }
+
     if (nextItem && nextItem.tagName === 'LI') {
       progressElement.style.width = '100%';
 
@@ -143,20 +188,17 @@ const StoriesJS = (wrapper, options) => {
       currentDataIndex = nextItem.getAttribute('data-index');
       console.log('[NAVEGANDO] NEXT');
       startProgress();
+    }else if (nextStory && nextStory.classList.contains('story')) {
+      progressElement.style.width = '100%';
+      currentElPost.parentElement.querySelector('ul.current').classList.remove('current');
+      activeItem.classList.remove('active');
+      openStory(nextStory.querySelector('.story__cover'), false);
     } else {
       exit();
     }
 
     getCallBack('nextSlide')(activeItem, nextItem);
   };
-
-  const playVideo = (videoElement) => {
-    videoElement.play();
-  }
-
-  const pauseVideo = (videoElement) => {
-    videoElement.pause();
-  }
 
   const startProgress = (width=0, timer=optionsDefault.timer) => {
     console.log('[START] PROGRESS');
@@ -175,7 +217,7 @@ const StoriesJS = (wrapper, options) => {
     function frame() {
       if (width >= 100) {
         clearInterval(id);
-        nextSlide();
+        // nextSlide();
       } else {
         width += 1;
         progressElement.style.width = `${width}%`;
@@ -185,26 +227,31 @@ const StoriesJS = (wrapper, options) => {
     getCallBack('currentSlide')(currentElPost.parentNode, currentElPost.querySelector('.active'));
   };
 
-  const prevSlide = () => {
-    console.log('[CLICK] PREVIOUS ITEM');
-    const activeItem = document.querySelector('li.story__item.active');
-    const prevItem = activeItem ? activeItem.previousElementSibling : null;
+  const exit = (callExitScreen=true) => {
+    if (id) clearInterval(id);
+    const activeStory = currentElPost.querySelector('li.story__item.active');
 
-    const progressElement = currentElPost.querySelector(`.progress-bar[data-index="${currentDataIndex}"] > .mybar`);
+    const stories = currentElPost.parentElement.parentElement.querySelectorAll('.story__cover');
 
-    progressElement.style.width = '0%';
+    if (activeStory) {
+      console.log('[EXIT] SAINDO');
 
-    if (prevItem && prevItem.tagName === 'LI') {
-      activeItem.classList.remove('active');
-      prevItem.classList.add('active');
-      currentDataIndex = prevItem.getAttribute('data-index');
-      console.log('[NAVEGANDO] PREVIOUS');
-      startProgress();
-    } else {
-      exit();
+      toggleClass(stories, 'hidden');
+      currentElPost.querySelector(`.progress-bar[data-index="${currentDataIndex}"] > .mybar`).style.width = '0%';
+      const parentActive = activeStory.parentElement;
+      activeStory.classList.remove('active');
+      parentActive.classList.remove('current');
+
+      if(isVideo){
+        const videoElement = activeStory.children[0];
+        stopVideo(videoElement);
+      }
+
+      if(callExitScreen){
+        screenfull.exit();
+      };
+      getCallBack('exit')(activeStory);
     }
-
-    getCallBack('prevSlide')(activeItem, prevItem);
   };
 
   const onTouchStartActiveSlide = (element) => {
@@ -242,16 +289,16 @@ const StoriesJS = (wrapper, options) => {
     getCallBack('onTouchEndActiveSlide')();
   };
 
+
   const playStories = (element) => {
     console.log('Play story');
-
     element.classList.add('current');
 
     if (element.getElementsByClassName('active').length <= 0) {
       const li = element.getElementsByTagName('li')[0];
       li.classList.add('active');
       currentDataIndex = li.getAttribute('data-index');
-      screenfull.request(element);
+      screenfull.request(element.parentElement.parentElement);
     }
 
     startProgress();
@@ -280,7 +327,7 @@ const StoriesJS = (wrapper, options) => {
   };
 
   const renderProgress = totalBars => Array(totalBars + 1).join(1).split('').map((x, i) => i)
-    .map(index => `<div class="progress-bar" data-index="${index + 1}"> <div class="mybar"></div></div>`);
+    .map(index => `<div class="progress-bar" data-index="${index + 1}"> <div class="mybar"></div></div>`).join('');
 
   const renderStory = story => `<div class="story"><div class="story__cover"> <img src=${story.preview || story.slides[0].preview || story.slides[0].src} alt="${story.title}" /> </div> <ul class="story__items"> <div class="btn-prev"></div> <div class="btn-next"></div> <div class="progresses-bars"> ${renderProgress(story.slides.length)} </div> <div class="btn-close"> <span>X</span> </div> ${story.slides.map(renderStoryItem).join('')} </ul> </div>`;
 
