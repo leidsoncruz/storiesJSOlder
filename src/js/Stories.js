@@ -1,7 +1,8 @@
 import screenfull from 'screenfull';
 
 const StoriesJS = (wrapper, options) => {
-  let currentElPost = '';
+  let currentElPost, currentStory, activeProgressElement = '';
+
   let currentDataIndex = 0;
   let id = 0;
   let isVideo = false;
@@ -17,7 +18,7 @@ const StoriesJS = (wrapper, options) => {
   const get = (param) => {
     if (!param) return false;
     try {
-      if (options[param] == null || options[param] == undefined) return returnDefault(param);
+      if (options[param] == null) return returnDefault(param);
 
       return options[param];
     } catch (e) {
@@ -129,81 +130,34 @@ const StoriesJS = (wrapper, options) => {
 
   const openStory = (element, addClass=true) => {
     currentElPost = element.parentNode.querySelector('.story__items');
+    currentStory = element.parentNode;
 
-    const stories = element.parentElement.parentElement.querySelectorAll('.story__cover');
-    if(addClass) toggleClass(stories, 'hidden');
+    const storiesPreview = document.querySelectorAll('.post-stories > .story > .story__cover');
+    if(addClass) toggleClass(storiesPreview, 'hidden');
 
-    playStories(currentElPost);
+    playStories();
     getCallBack('openStory')(currentElPost);
   };
 
-  const prevSlide = () => {
-    console.log('[CLICK] PREVIOUS ITEM');
-    const activeItem = currentElPost.querySelector('li.story__item.active');
-    const prevItem = activeItem ? activeItem.previousElementSibling : null;
+  const playStories = () => {
+    console.log('Play story');
 
-    const progressElement = currentElPost.querySelector(`.progress-bar[data-index="${currentDataIndex}"] > .mybar`);
+    currentStory.classList.add('current');
 
-    progressElement.style.width = '0%';
-
-    if(isVideo){
-      const videoElement = activeItem.children[0];
-      stopVideo(videoElement);
+    if (currentElPost.getElementsByClassName('active').length <= 0) {
+      const li = currentElPost.getElementsByTagName('li')[0];
+      li.classList.add('active');
+      currentDataIndex = li.getAttribute('data-index');
+      screenfull.request(currentStory.parentElement);
     }
 
-    if (prevItem && prevItem.tagName === 'LI') {
-      activeItem.classList.remove('active');
-      prevItem.classList.add('active');
-      currentDataIndex = prevItem.getAttribute('data-index');
-      console.log('[NAVEGANDO] PREVIOUS');
-      startProgress();
-    } else {
-      exit();
-    }
-
-    getCallBack('prevSlide')(activeItem, prevItem);
-  };
-
-
-  const nextSlide = () => {
-    console.log('[CLICK] NEXT ITEM');
-    const activeItem = currentElPost.querySelector('li.story__item.active');
-
-    const nextItem = activeItem ? activeItem.nextElementSibling : null;
-
-    const nextStory = currentElPost.parentElement.nextElementSibling;
-
-    const progressElement = currentElPost.querySelector(`.progress-bar[data-index="${currentDataIndex}"] > .mybar`);
-
-    if(isVideo){
-      const videoElement = activeItem.children[0];
-      stopVideo(videoElement);
-    }
-
-    if (nextItem && nextItem.tagName === 'LI') {
-      progressElement.style.width = '100%';
-
-      activeItem.classList.remove('active');
-      nextItem.classList.add('active');
-      currentDataIndex = nextItem.getAttribute('data-index');
-      console.log('[NAVEGANDO] NEXT');
-      startProgress();
-    }else if (nextStory && nextStory.classList.contains('story')) {
-      progressElement.style.width = '100%';
-      currentElPost.parentElement.querySelector('ul.current').classList.remove('current');
-      activeItem.classList.remove('active');
-      openStory(nextStory.querySelector('.story__cover'), false);
-    } else {
-      exit();
-    }
-
-    getCallBack('nextSlide')(activeItem, nextItem);
+    startProgress();
   };
 
   const startProgress = (width=0, timer=optionsDefault.timer) => {
     console.log('[START] PROGRESS');
 
-    const progressElement = currentElPost.querySelector(`.progress-bar[data-index="${currentDataIndex}"] > .mybar`);
+    activeProgressElement = currentElPost.querySelector(`.progress-bar[data-index="${currentDataIndex}"] > .mybar`);
     clearInterval(id);
 
     const contentElement = currentElPost.querySelector('.active').children[0];
@@ -220,27 +174,91 @@ const StoriesJS = (wrapper, options) => {
         // nextSlide();
       } else {
         width += 1;
-        progressElement.style.width = `${width}%`;
+        activeProgressElement.style.width = `${width}%`;
       }
     }
 
     getCallBack('currentSlide')(currentElPost.parentNode, currentElPost.querySelector('.active'));
   };
 
+
+  const prevSlide = () => {
+    console.log('[CLICK] PREVIOUS ITEM');
+    const activeItem = currentElPost.querySelector('li.story__item.active');
+    const prevItem = activeItem ? activeItem.previousElementSibling : null;
+    const prevStory = currentElPost.parentElement.previousElementSibling;
+
+    activeProgressElement.style.width = '0%';
+
+    if(isVideo){
+      const videoElement = activeItem.children[0];
+      stopVideo(videoElement);
+    }
+
+    if (prevItem && prevItem.tagName === 'LI') {
+      activeItem.classList.remove('active');
+      prevItem.classList.add('active');
+      currentDataIndex = prevItem.getAttribute('data-index');
+      console.log('[NAVEGANDO] PREVIOUS');
+      startProgress();
+    }else if (prevStory && prevStory.classList.contains('story')) {
+      activeProgressElement.style.width = '100%';
+      currentStory.classList.remove('current');
+      activeItem.classList.remove('active');
+      openStory(prevStory.querySelector('.story__cover'), false);
+    }
+    else {
+      exit();
+    }
+
+    getCallBack('prevSlide')(activeItem, prevItem);
+  };
+
+
+  const nextSlide = () => {
+    console.log('[CLICK] NEXT ITEM');
+
+    const activeItem = currentElPost.querySelector('li.story__item.active');
+    const nextItem = activeItem ? activeItem.nextElementSibling : null;
+    const nextStory = currentElPost.parentElement.nextElementSibling;
+
+    if(isVideo){
+      const videoElement = activeItem.children[0];
+      stopVideo(videoElement);
+    }
+
+    if (nextItem && nextItem.tagName === 'LI') {
+      activeProgressElement.style.width = '100%';
+      activeItem.classList.remove('active');
+      nextItem.classList.add('active');
+      currentDataIndex = nextItem.getAttribute('data-index');
+      console.log('[NAVEGANDO] NEXT');
+      startProgress();
+    }else if (nextStory && nextStory.classList.contains('story')) {
+      activeProgressElement.style.width = '100%';
+      currentStory.classList.remove('current');
+      activeItem.classList.remove('active');
+      openStory(nextStory.querySelector('.story__cover'), false);
+    } else {
+      exit();
+    }
+
+    getCallBack('nextSlide')(activeItem, nextItem);
+  };
+
   const exit = (callExitScreen=true) => {
     if (id) clearInterval(id);
     const activeStory = currentElPost.querySelector('li.story__item.active');
 
-    const stories = currentElPost.parentElement.parentElement.querySelectorAll('.story__cover');
-
     if (activeStory) {
       console.log('[EXIT] SAINDO');
+      const storiesPreview = document.querySelectorAll('.post-stories > .story > .story__cover');
 
-      toggleClass(stories, 'hidden');
-      currentElPost.querySelector(`.progress-bar[data-index="${currentDataIndex}"] > .mybar`).style.width = '0%';
+      toggleClass(storiesPreview, 'hidden');
+      activeProgressElement.style.width = '0%';
       const parentActive = activeStory.parentElement;
       activeStory.classList.remove('active');
-      parentActive.classList.remove('current');
+      currentStory.classList.remove('current');
 
       if(isVideo){
         const videoElement = activeStory.children[0];
@@ -260,7 +278,7 @@ const StoriesJS = (wrapper, options) => {
     //Extrair essa lógica para ser um event para não ficar processando toda vez
     if(get('hiddenElements')){
       const legenda = element.querySelector('span');
-      const progressBar = element.parentNode.querySelector('.progresses-bars');
+      const progressBar = activeProgressElement.parentElement.parentElement;
       const close = element.parentNode.querySelector('.btn-close');
       hideElements(parseElements([progressBar, legenda, close]));
     }
@@ -274,34 +292,20 @@ const StoriesJS = (wrapper, options) => {
 
   const onTouchEndActiveSlide = (element) => {
     console.log('[TOUCH END] ACTIVE ITEM');
-    const progressBar = element.parentElement.querySelector(`.progress-bar[data-index="${currentDataIndex}"]`);
-    const currentProgressWidth = progressBar.querySelector('.mybar').style.width;
+    const progressBar = activeProgressElement.parentElement.parentElement;
+    const currentProgressWidth = activeProgressElement.style.width;
 
+console.log(progressBar, currentProgressWidth);
 
     //Extrair essa lógica para ser um event para não ficar processando toda vez
     if(get('hiddenElements')){
       const legenda = element.querySelector('span');
       const close = element.parentNode.querySelector('.btn-close');
-      removeAttributesFromElements(parseElements([progressBar.parentNode, legenda, close]), 'style');
+      removeAttributesFromElements(parseElements([progressBar, legenda, close]), 'style');
     }
 
     startProgress(parseInt(currentProgressWidth, 10));
     getCallBack('onTouchEndActiveSlide')();
-  };
-
-
-  const playStories = (element) => {
-    console.log('Play story');
-    element.classList.add('current');
-
-    if (element.getElementsByClassName('active').length <= 0) {
-      const li = element.getElementsByTagName('li')[0];
-      li.classList.add('active');
-      currentDataIndex = li.getAttribute('data-index');
-      screenfull.request(element.parentElement.parentElement);
-    }
-
-    startProgress();
   };
 
   const renderImage = (storyItem, index) => {

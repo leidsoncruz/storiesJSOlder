@@ -18,13 +18,13 @@
   }
 
   &__items{
+    .current &  {
+      display: block;
+    }
+
     list-style: none;
     display: none;
     padding: 0;
-
-    &.current {
-      display: block;
-    }
 
     > .btn-prev, .btn-next {
       height: 100%;
