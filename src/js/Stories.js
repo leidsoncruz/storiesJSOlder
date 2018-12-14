@@ -171,7 +171,7 @@ const StoriesJS = (wrapper, options) => {
     function frame() {
       if (width >= 100) {
         clearInterval(id);
-        // nextSlide();
+        nextSlide();
       } else {
         width += 1;
         activeProgressElement.style.width = `${width}%`;
@@ -180,7 +180,6 @@ const StoriesJS = (wrapper, options) => {
 
     getCallBack('currentSlide')(currentElPost.parentNode, currentElPost.querySelector('.active'));
   };
-
 
   const prevSlide = () => {
     console.log('[CLICK] PREVIOUS ITEM');
@@ -214,7 +213,6 @@ const StoriesJS = (wrapper, options) => {
     getCallBack('prevSlide')(activeItem, prevItem);
   };
 
-
   const nextSlide = () => {
     console.log('[CLICK] NEXT ITEM');
 
@@ -236,10 +234,12 @@ const StoriesJS = (wrapper, options) => {
       startProgress();
     }else if (nextStory && nextStory.classList.contains('story')) {
       activeProgressElement.style.width = '100%';
+      currentStory.classList.add('seen');
       currentStory.classList.remove('current');
       activeItem.classList.remove('active');
       openStory(nextStory.querySelector('.story__cover'), false);
     } else {
+      currentStory.classList.add('seen');
       exit();
     }
 
@@ -295,8 +295,6 @@ const StoriesJS = (wrapper, options) => {
     const progressBar = activeProgressElement.parentElement.parentElement;
     const currentProgressWidth = activeProgressElement.style.width;
 
-console.log(progressBar, currentProgressWidth);
-
     //Extrair essa lógica para ser um event para não ficar processando toda vez
     if(get('hiddenElements')){
       const legenda = element.querySelector('span');
@@ -331,9 +329,9 @@ console.log(progressBar, currentProgressWidth);
   };
 
   const renderProgress = totalBars => Array(totalBars + 1).join(1).split('').map((x, i) => i)
-    .map(index => `<div class="progress-bar" data-index="${index + 1}"> <div class="mybar"></div></div>`).join('');
+  .map(index => `<div class="progress-bar" data-index="${index + 1}"> <div class="mybar"></div></div>`).join('');
 
-  const renderStory = story => `<div class="story"><div class="story__cover"> <img src=${story.preview || story.slides[0].preview || story.slides[0].src} alt="${story.title}" /> </div> <ul class="story__items"> <div class="btn-prev"></div> <div class="btn-next"></div> <div class="progresses-bars"> ${renderProgress(story.slides.length)} </div> <div class="btn-close"> <span>X</span> </div> ${story.slides.map(renderStoryItem).join('')} </ul> </div>`;
+  const renderStory = (story,idx) => `<div class="story"><div class="story__cover"> <img src=${story.preview || story.slides[0].preview || story.slides[0].src} alt="${story.title}" /> </div> <ul class="story__items"> <div class="btn-prev"></div> <div class="btn-next"></div> <div class="progresses-bars"> ${renderProgress(story.slides.length)} </div> <div class="btn-close"> <span>X</span> </div> ${story.slides.map(renderStoryItem).join('')} </ul></div>`;
 
   const render = () => {
     const div = document.createElement('div');
@@ -356,52 +354,5 @@ console.log(progressBar, currentProgressWidth);
   changeScreen();
   initBindMyEvents();
 };
-
-const opt = {
-  stories: [{
-    title: 'poe',
-    preview: 'https://raw.githubusercontent.com/ramon82/assets/master/zuck.js/stories/8.jpg',
-    slides: [{
-      type: 'image',
-      title: 't1',
-      src: 'https://raw.githubusercontent.com/ramon82/assets/master/zuck.js/stories/8.jpg'
-    }, {
-      type: 'image',
-      title: 't2',
-      src: 'https://raw.githubusercontent.com/ramon82/assets/master/zuck.js/stories/9.jpg'
-    }],
-  }, {
-    title: 'po2',
-    preview: '',
-    slides: [{
-      type: 'video',
-      preview: 'https://raw.githubusercontent.com/ramon82/assets/master/zuck.js/stories/2.jpg',
-      title: 't2',
-      src: 'https://raw.githubusercontent.com/ramon82/assets/master/zuck.js/stories/2.mp4'
-    }, {
-      title: 't2',
-      src: 'https://raw.githubusercontent.com/ramon82/assets/master/zuck.js/stories/6.jpg'
-    }]
-  }],
-  callbacks: {
-    // onTouchStartActiveSlide: () => {console.log('apertou');},
-    // onTouchEndActiveSlide: () => {console.log('saiu');},
-    // prevSlide: (activeItem, prevItem) => {console.log('fui', activeItem, prevItem);},
-    // openStory: (currentElPost) => {console.log('foi2', currentElPost)},
-    // exit: (activeItem) => {console.log('saiu', activeItem);},
-    // currentSlide: (story, activeItem) => {
-    //   console.log('vendo agr', story.parentElement, activeItem);
-    // }
-  },
-  // transformer: (data) => {
-    //retornando options inteiro
-    // console.log( data );
-    // return {
-    //   ...data
-    // }
-  // }
-};
-
-StoriesJS(null, opt);
 
 export default StoriesJS;
