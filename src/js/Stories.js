@@ -1,6 +1,7 @@
 import screenfull from 'screenfull';
+import '../scss/Stories.scss';
 
-const StoriesJS = (wrapper, options) => {
+export const StoriesJS = (wrapper, options) => {
   let currentElPost, currentStory, activeProgressElement = '';
 
   let currentDataIndex = 0;
@@ -354,5 +355,3 @@ const StoriesJS = (wrapper, options) => {
   changeScreen();
   initBindMyEvents();
 };
-
-export default StoriesJS;

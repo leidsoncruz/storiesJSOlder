@@ -1,48 +1,37 @@
 const path = require('path');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const webpack = require('webpack');
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
 
 module.exports = {
-  mode: 'development',
-  entry: ['./src/js/Stories.js', './src/scss/Stories.scss'],
-  plugins: [
-    new CleanWebpackPlugin(['dist']),
-    new HtmlWebpackPlugin(),
-    new MiniCssExtractPlugin({
-      filename: '[name].css',
-      chunkFilename: '[id].css',
-    }),
-  ],
-  // watch: true,
+  entry: './src/js/Stories.js',
   output: {
-    filename: '[name].bundle.js',
+    filename: 'stories.js',
     path: path.resolve(__dirname, 'dist'),
-  },
-  resolve: {
-    modules: ['node_modules', './src'],
-    extensions: ['.js'],
+    libraryTarget: "this",
+    publicPath: '/'
   },
   module: {
     rules: [
-      // {
-      //   test: /\.js$/,
-      //   exclude: /node_modules/,
-      //   use: [{ loader: 'babel-loader' }, { loader: 'eslint-loader' }],
-      // },
+      {
+        test: /\.js$/,
+        exclude: /(node_modules)/,
+        use: [{ loader: 'babel-loader' }],
+      },
       {
         test: /\.scss$/,
-        use: [
-          process.env.NODE_ENV !== 'production' ? 'style-loader' : MiniCssExtractPlugin.loader,
-          'css-loader',
-          'sass-loader',
-        ],
+        use: ExtractTextPlugin.extract({
+          fallback: 'style-loader',
+          use: ['css-loader', 'sass-loader'],
+        }),
       },
     ],
   },
-  devServer: {
-    contentBase: './dist',
-    port: 8000,
-  },
-};
+  plugins: [
+    new CleanWebpackPlugin(['dist']),
+    new ExtractTextPlugin('stories.css'),
+    new webpack.optimize.ModuleConcatenationPlugin(),
+  ],
+}
