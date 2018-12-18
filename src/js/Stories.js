@@ -21,8 +21,8 @@ export const StoriesJS = (wrapper, options) => {
   getWrapperElement().innerHTML = "<stories-wrapper></stories-wrapper>";
 
   screenfull.on('change', () => {
-     if (!screenfull.isFullscreen) exit();
-   });
+    if (!screenfull.isFullscreen) exit();
+  });
 
   // Elements
   customElements.define('stories-wrapper', class extends HTMLElement {
@@ -50,7 +50,7 @@ export const StoriesJS = (wrapper, options) => {
       let modal = document.createElement('div');
       modal.classList.add('modal', 'modal-stories');
       modal.innerHTML = `
-        <story-items slides=${JSON.stringify(this.story.slides)}></story-items>
+      <story-items slides=${JSON.stringify(this.story.slides)}></story-items>
       `;
       document.body.appendChild(modal);
       screenfull.request(modal);
@@ -65,7 +65,7 @@ export const StoriesJS = (wrapper, options) => {
       const preview = this.story.preview || this.story.slides[0].preview || this.story.slides[0].src;
       const title = this.story.title;
       return `
-        <story-cover preview=${preview} title=${title}></story-cover>
+      <story-cover preview=${preview} title=${title}></story-cover>
       `;
     }
 
@@ -82,7 +82,7 @@ export const StoriesJS = (wrapper, options) => {
       const preview = this.getAttribute('preview');
       const title = this.getAttribute('title');
       return `
-        <img src=${preview} alt=${title} />
+      <img src=${preview} alt=${title} />
       `;
     }
 
@@ -99,26 +99,66 @@ export const StoriesJS = (wrapper, options) => {
       const slides = JSON.parse(this.getAttribute('slides'));
 
       return `
-        <div class="btn-prev"></div>
-        <div class="btn-next"></div>
-        <progresses-bar length=${slides.length}></progresses-bar>
-        <ul class="story__slides">
-          ${slides.map((slide, idx) => slide.type == "video" ? this.renderVideo(slide, idx) : this.renderImage(slide, idx)).join('')}
-        </ul>
+      <div class="btn-prev"></div>
+      <div class="btn-next"></div>
+      <progresses-bar length=${slides.length}></progresses-bar>
+      <ul class="story__slides">
+        ${slides.map((slide, idx) => slide.type == "video" ? this._renderVideo(slide, idx) : this._renderImage(slide, idx)).join('')}
+      </ul>
       `;
     }
 
-    renderImage(slide, index){
+    _renderImage(slide, index){
       return `<li class="story__item" data-index="${index + 1}"> <img src=${slide.src} /> <span>${slide.title}</span> </li>`
     }
 
-    renderVideo(slide, index){
-      return `<li class="story__item" data-index="${index + 1}"><video src="${slide.src}"></video></li>`;
+    _renderVideo(slide, index){
+      return `<li class="story__item" data-index="${index + 1}"><video src="${slide.src}" preload="auto"></video></li>`;
+    }
+
+    _playSlide(width=0, timer=3){
+      const me = this;
+      const timeSlide = Math.floor(timer)*10;
+
+
+      this.id = setInterval(frame, timeSlide);
+      function frame() {
+        if (width >= 100) {
+          clearInterval(this.id);
+          // nextSlide();
+        } else {
+          width += 1;
+          me.activeProgress.style.width = `${width}%`;
+        }
+      }
+    }
+
+    startProgress(){
+      const me = this;
+      const contentElement = this.querySelector('.active').children[0];
+
+      this.isVideo = contentElement.tagName==="VIDEO";
+
+      if(this.isVideo){
+        contentElement.addEventListener('loadeddata', function() {
+          if(contentElement.readyState >= 2) {
+            me._playSlide(0, contentElement.duration);
+            contentElement.play();
+          }
+        });
+      }else{
+        this._playSlide();
+      }
+
     }
 
     connectedCallback(){
-      const activeItem = this.querySelector('.story__item.active');
-      if(!activeItem) this.querySelector('.story__item').classList.add('active');
+      this.activeItem = this.querySelector('.story__item.active') || this.querySelector('.story__item');
+      this.activeItem.classList.add('active');
+      this.currentDataIndex = this.activeItem.getAttribute('data-index');
+      this.activeProgress = this.querySelector(`.progress-bar[data-index="${this.currentDataIndex}"] > .mybar`);
+
+      this.startProgress();
     }
 
   });
