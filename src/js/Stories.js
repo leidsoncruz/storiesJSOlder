@@ -54,7 +54,6 @@ export const StoriesJS = (wrapper, options) => {
       `;
       document.body.appendChild(modal);
       screenfull.request(modal);
-      console.log(this);
     }
 
     connectedCallback() {
@@ -68,10 +67,6 @@ export const StoriesJS = (wrapper, options) => {
       return `
         <story-cover preview=${preview} title=${title}></story-cover>
       `;
-      // return `
-      //   <story-cover preview=${preview} title=${title}></story-cover>
-      //   <story-items slides=${JSON.stringify(story.slides)}></story-items>
-      // `;
     }
 
   });
@@ -119,6 +114,11 @@ export const StoriesJS = (wrapper, options) => {
 
     renderVideo(slide, index){
       return `<li class="story__item" data-index="${index + 1}"><video src="${slide.src}"></video></li>`;
+    }
+
+    connectedCallback(){
+      const activeItem = this.querySelector('.story__item.active');
+      if(!activeItem) this.querySelector('.story__item').classList.add('active');
     }
 
   });
