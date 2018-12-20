@@ -116,20 +116,28 @@ export const StoriesJS = (wrapper, options) => {
       return `<li class="story__item" data-index="${index + 1}"><video src="${slide.src}" preload="auto"></video></li>`;
     }
 
-    _playSlide(width=0, timer=3){
+    _playSlide(width=0, timer=1){
       const me = this;
       const timeSlide = Math.floor(timer)*10;
 
 
-      this.id = setInterval(frame, timeSlide);
+      var id = setInterval(frame, timeSlide);
+
       function frame() {
         if (width >= 100) {
-          clearInterval(this.id);
-          // nextSlide();
+          clearInterval(id);
+          me._nextSlide();
         } else {
           width += 1;
           me.activeProgress.style.width = `${width}%`;
         }
+      }
+    }
+
+    _nextSlide() {
+      const nextSlide = this.activeItem.nextElementSibling;
+      if(this.isVideo){
+        this.activeItem.children[0].stop;
       }
     }
 
