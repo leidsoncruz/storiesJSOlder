@@ -12,6 +12,7 @@
 .story {
   display: inline-block;
   margin: 0 6px;
+  cursor: pointer;
 
   &.current {
     width: unset;

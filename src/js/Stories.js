@@ -4,13 +4,19 @@ import screenfull from 'screenfull';
 import '../scss/Stories.scss';
 
 export const StoriesJS = (wrapper, options) => {
+  const optionsDefault = {
+    timer: 3
+  };
+
+  let currentIndexStory = 0;
+
   const getWrapperElement = () => {
     return document.querySelector(wrapper) ? wrapper : document.body;
   }
 
   const exit = () => {
     const modal = document.querySelector('.modal.modal-stories');
-    modal.remove();
+    if(modal) modal.remove();
   }
 
   if (!(window.customElements && document.body.attachShadow)) {
@@ -37,6 +43,12 @@ export const StoriesJS = (wrapper, options) => {
     }
   });
 
+  const openStory = (element, story) => {
+    currentIndexStory = parseInt(element.getAttribute('data-index'));
+    let modal = document.querySelector('.modal.modal-stories');
+    modal.querySelector('.story__items').setAttribute('slides', JSON.stringify(story.slides));
+  }
+
   customElements.define('stories-story', class extends HTMLElement {
     constructor() {
       super();
@@ -47,6 +59,7 @@ export const StoriesJS = (wrapper, options) => {
     }
 
     _openStory() {
+      currentIndexStory = parseInt(this.getAttribute('data-index'));
       let modal = document.createElement('div');
       modal.classList.add('modal', 'modal-stories');
       modal.innerHTML = `
@@ -59,6 +72,10 @@ export const StoriesJS = (wrapper, options) => {
     connectedCallback() {
       this._boundOpenStory = this._openStory.bind(this);
       this.addEventListener('click', this._boundOpenStory);
+    }
+
+    disconnectedCallback(){
+      this.removeEventListener('click', this._boundOpenStory);
     }
 
     render(){
@@ -89,19 +106,51 @@ export const StoriesJS = (wrapper, options) => {
   });
 
   customElements.define('story-items', class extends HTMLElement {
+    static get observedAttributes() {
+      return ['slides'];
+    }
+
+    attributeChangedCallback(name, oldValue, newValue) {
+      if(oldValue){
+        this.innerHTML = this._render();
+        this._init();
+      }
+    }
+
     constructor() {
       super();
       this.classList.add('story__items');
-      this.innerHTML = this.render();
+      this.innerHTML = this._render();
     }
 
-    render(){
+    _init(){
+      this.activeSlide = this.querySelector('.story__item.active') || this.querySelector('.story__item');
+      this.activeSlide.classList.add('active');
+      this.currentDataIndex = this.activeSlide.getAttribute('data-index');
+      this.activeProgress = this.querySelector(`.progress-bar[data-index="${this.currentDataIndex}"] > .mybar`);
+      this.parentElement.querySelector('.btn-close').addEventListener('click', exit);
+
+      this._startProgress();
+
+    }
+
+    connectedCallback(){
+      this._init();
+
+    }
+
+    disconnectedCallback(){
+      this.parentElement.querySelector('.btn-close').removeEventListener('click', exit);
+    }
+
+    _render(){
       const slides = JSON.parse(this.getAttribute('slides'));
 
       return `
       <div class="btn-prev"></div>
       <div class="btn-next"></div>
       <progresses-bar length=${slides.length}></progresses-bar>
+      <div class="btn-close"> <span>X</span> </div>
       <ul class="story__slides">
         ${slides.map((slide, idx) => slide.type == "video" ? this._renderVideo(slide, idx) : this._renderImage(slide, idx)).join('')}
       </ul>
@@ -116,32 +165,7 @@ export const StoriesJS = (wrapper, options) => {
       return `<li class="story__item" data-index="${index + 1}"><video src="${slide.src}" preload="auto"></video></li>`;
     }
 
-    _playSlide(width=0, timer=1){
-      const me = this;
-      const timeSlide = Math.floor(timer)*10;
-
-
-      var id = setInterval(frame, timeSlide);
-
-      function frame() {
-        if (width >= 100) {
-          clearInterval(id);
-          me._nextSlide();
-        } else {
-          width += 1;
-          me.activeProgress.style.width = `${width}%`;
-        }
-      }
-    }
-
-    _nextSlide() {
-      const nextSlide = this.activeItem.nextElementSibling;
-      if(this.isVideo){
-        this.activeItem.children[0].stop;
-      }
-    }
-
-    startProgress(){
+    _startProgress(){
       const me = this;
       const contentElement = this.querySelector('.active').children[0];
 
@@ -160,13 +184,46 @@ export const StoriesJS = (wrapper, options) => {
 
     }
 
-    connectedCallback(){
-      this.activeItem = this.querySelector('.story__item.active') || this.querySelector('.story__item');
-      this.activeItem.classList.add('active');
-      this.currentDataIndex = this.activeItem.getAttribute('data-index');
-      this.activeProgress = this.querySelector(`.progress-bar[data-index="${this.currentDataIndex}"] > .mybar`);
+    _playSlide(width=0, timer=optionsDefault.timer){
+      const me = this;
+      const timeSlide = Math.floor(timer)*10;
 
-      this.startProgress();
+      this.idInterval = setInterval(frame, timeSlide);
+
+      function frame() {
+
+        if (width >= 100) {
+          clearInterval(me.idInterval);
+          me._nextSlide();
+        } else {
+          width += 1;
+          me.activeProgress.style.width = `${width}%`;
+        }
+      }
+    }
+
+    _nextSlide() {
+      const nextSlide = this.activeSlide.nextElementSibling;
+      const nextStory = document.querySelector(`.story[data-index="${currentIndexStory+1}"]`);
+
+      if(this.isVideo){
+        this.activeSlide.children[0].stop;
+      }
+
+      if(nextSlide && nextSlide.tagName === "LI"){
+        this.activeProgress.style.width = '100%';
+        this.activeSlide.classList.remove('active');
+        nextSlide.classList.add('active');
+        this.activeSlide = nextSlide;
+        this.currentDataIndex = nextSlide.getAttribute('data-index');
+        this.activeProgress = this.querySelector(`.progress-bar[data-index="${this.currentDataIndex}"] > .mybar`);
+        this._startProgress();
+      }else if (nextStory && nextStory.classList.contains('story')) {
+        openStory(nextStory, options.stories[currentIndexStory+1]);
+      }else{
+        exit();
+      }
+
     }
 
   });
