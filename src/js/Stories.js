@@ -8,14 +8,14 @@ export const StoriesJS = (wrapper, options) => {
     timer: 3
   };
 
-  let currentIndexStory = 0;
+  let currentIndexStory = 0, idInterval = 0;
 
   const getWrapperElement = () => {
     return document.querySelector(wrapper) ? wrapper : document.body;
   }
 
-  const exit = (id=null) => {
-    if(id)clearInterval(id);
+  const exit = () => {
+    if(idInterval)clearInterval(idInterval);
     const modal = document.querySelector('.modal.modal-stories');
     if(modal) modal.remove();
   }
@@ -72,6 +72,7 @@ export const StoriesJS = (wrapper, options) => {
     currentIndexStory = parseInt(element.getAttribute('data-index'));
     let modal = document.querySelector('.modal.modal-stories');
     modal.querySelector('.story__items').setAttribute('slides', JSON.stringify(story.slides));
+    modal.querySelector('.story__items').setAttribute('time', 0);
   }
 
   customElements.define('stories-story', class extends HTMLElement {
@@ -130,16 +131,37 @@ export const StoriesJS = (wrapper, options) => {
 
   });
 
-  const _touchStartItem = (element) => {
-    console.log(element);
-  }
-
-
   customElements.define('story-item-image', class extends HTMLElement {
+    //fazer alteração em um atributo do pai para executar o changecallback
     constructor(){
       super();
-      this.addEventListener('touchstart', () => _touchStartItem(this))
-      this.addEventListener('mousedown', () => _touchStartItem(this))
+      this.addEventListener('touchstart', (event) => {event.preventDefault();this._touchStartItem(this)})
+      this.addEventListener('mousedown', (event) => {event.preventDefault();this._touchStartItem(this)})
+      this.addEventListener('touchend', (event) => {event.preventDefault();this._touchEndtItem(this)})
+      this.addEventListener('mouseup', (event) => {event.preventDefault();this._touchEndtItem(this)})
+    }
+
+    _touchStartItem(element){
+      this.btnClose = this.parentElement.parentElement.querySelector('.btn-close');
+      this.progressBar = this.parentElement.parentElement.querySelector('progresses-bar');
+      this.spanTitle = this.querySelector('span');
+
+      this.btnClose.style= 'none';
+      this.progressBar.style.display = 'none';
+      this.spanTitle.style.display = 'none';
+
+      clearInterval(idInterval);
+    }
+
+    _touchEndtItem(element) {
+      this.btnClose.removeAttribute('style');
+      this.progressBar.removeAttribute('style');
+      this.spanTitle.removeAttribute('style');
+
+      const activeIndexSlide = this.parentElement.querySelector('.active').getAttribute('data-index');
+      const currentProgressWidth = this.progressBar.querySelector(`.progress-bar[data-index="${activeIndexSlide}"] > .mybar`).style.width;
+
+      this.parentElement.parentElement.setAttribute('progress-width', parseInt(currentProgressWidth, 10))
     }
 
     _render(slide){
@@ -148,6 +170,33 @@ export const StoriesJS = (wrapper, options) => {
   });
 
   customElements.define('story-item-video', class extends HTMLElement {
+    constructor(){
+      super();
+      this.addEventListener('touchstart', (event) => {event.preventDefault();this._touchStartItem(this)})
+      this.addEventListener('mousedown', (event) => {event.preventDefault();this._touchStartItem(this)})
+      this.addEventListener('touchend', (event) => {event.preventDefault();this._touchEndtItem(this)})
+      this.addEventListener('mouseup', (event) => {event.preventDefault();this._touchEndtItem(this)})
+    }
+
+    _touchStartItem(element){
+      this.btnClose = this.parentElement.parentElement.querySelector('.btn-close');
+      this.progressBar = this.parentElement.parentElement.querySelector('progresses-bar');
+
+      this.btnClose.style= 'none';
+      this.progressBar.style.display = 'none';
+      this.children[0].pause();
+      clearInterval(idInterval);
+    }
+
+    _touchEndtItem(element) {
+      this.btnClose.removeAttribute('style');
+      this.progressBar.removeAttribute('style');
+
+      const activeIndexSlide = this.parentElement.querySelector('.active').getAttribute('data-index');
+      const currentProgressWidth = this.progressBar.querySelector(`.progress-bar[data-index="${activeIndexSlide}"] > .mybar`).style.width;
+      this.parentElement.parentElement.setAttribute('progress-width', parseInt(currentProgressWidth, 10))
+    }
+
     _render(slide){
       this.innerHTML = `<video src="${slide.src}" preload="auto"></video>`;
     }
@@ -156,17 +205,29 @@ export const StoriesJS = (wrapper, options) => {
 
   customElements.define('story-items', class extends HTMLElement {
     static get observedAttributes() {
-      return ['slides'];
+      return ['slides', 'progress-width'];
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
-      if(oldValue){
+      if(oldValue && name === 'slides'){
         this.slides = JSON.parse(this.getAttribute('slides'));
         this.innerHTML = this._render();
         this.list = this.querySelector('.story__slides');
         this._renderItems();
         this._init();
       }
+
+      if(newValue && name === 'progress-width'){
+        const width = parseInt(this.getAttribute('progress-width'), 10)
+        this._startProgress(width);
+      }
+    }
+
+    constructor() {
+      super();
+      this.classList.add('story__items');
+      this.slides = JSON.parse(this.getAttribute('slides'));
+      this.innerHTML = this._render();
     }
 
     connectedCallback(){
@@ -179,13 +240,6 @@ export const StoriesJS = (wrapper, options) => {
       this.parentElement.querySelector('.btn-prev').removeEventListener('click', () => this._prevSlide());
       this.parentElement.querySelector('.btn-next').removeEventListener('click', () => this._nextSlide());
       this.parentElement.querySelector('.btn-close').removeEventListener('click', exit);
-    }
-
-    constructor() {
-      super();
-      this.classList.add('story__items');
-      this.slides = JSON.parse(this.getAttribute('slides'));
-      this.innerHTML = this._render();
     }
 
     _bindEvents(){
@@ -201,9 +255,7 @@ export const StoriesJS = (wrapper, options) => {
       this.activeProgress = this.querySelector(`.progress-bar[data-index="${this.currentDataIndex}"] > .mybar`);
 
       this._bindEvents();
-
       this._startProgress();
-
     }
 
     _renderItems(){
@@ -246,18 +298,19 @@ export const StoriesJS = (wrapper, options) => {
       storyVideoEl._render(slide)
     }
 
-    _startProgress(){
+    _startProgress(width=0){
       const me = this;
       const contentElement = this.activeSlide.children[0];
 
-      if(this.idInterval)clearInterval(this.idInterval);
+      if(idInterval > 0)clearInterval(idInterval);
 
 
       this.isVideo = contentElement.tagName==="VIDEO";
 
       if(this.isVideo){
         if(contentElement.readyState >= 2) {
-          me._playSlide(0, contentElement.duration);
+          me._playSlide(width, contentElement.duration);
+          if(width==0) contentElement.currentTime=0;
           contentElement.play();
         }
 
@@ -268,7 +321,7 @@ export const StoriesJS = (wrapper, options) => {
           }
         });
       }else{
-        this._playSlide();
+        this._playSlide(width);
       }
 
     }
@@ -277,11 +330,11 @@ export const StoriesJS = (wrapper, options) => {
       const me = this;
       const timeSlide = Math.floor(timer)*10;
 
-      this.idInterval = setInterval(frame, timeSlide);
+      idInterval = setInterval(frame, timeSlide);
 
       function frame() {
         if (width >= 100) {
-          clearInterval(me.idInterval);
+          clearInterval(idInterval);
           // me._nextSlide();
         } else {
           width += 1;
@@ -305,11 +358,11 @@ export const StoriesJS = (wrapper, options) => {
         this.activeSlide = prevSlide;
         this.currentDataIndex = prevSlide.getAttribute('data-index');
         this.activeProgress = this.querySelector(`.progress-bar[data-index="${this.currentDataIndex}"] > .mybar`);
-        this._startProgress();
+        this._startProgress(0);
       }else if (prevStory && prevStory.classList.contains('story')) {
         openStory(prevStory, options.stories[currentIndexStory-1]);
       }else {
-        exit(this.idInterval);
+        exit();
       }
     }
 
@@ -332,7 +385,7 @@ export const StoriesJS = (wrapper, options) => {
       }else if (nextStory && nextStory.classList.contains('story')) {
         openStory(nextStory, options.stories[currentIndexStory+1]);
       }else{
-        exit(this.idInterval);
+        exit();
       }
     }
 
