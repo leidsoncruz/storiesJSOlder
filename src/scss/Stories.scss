@@ -92,8 +92,12 @@
     }
 
     > .btn-close {
+      font-family: OpenSans;
       color: white;
       position: absolute;
+      line-height: 50px;
+      font-weight: 500;
+      font-size: 40px;
       top: 80px;
       right: 10px;
     }

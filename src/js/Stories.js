@@ -150,7 +150,7 @@ export const StoriesJS = (wrapper, options) => {
       <div class="btn-prev"></div>
       <div class="btn-next"></div>
       <progresses-bar length=${slides.length}></progresses-bar>
-      <div class="btn-close"> <span>X</span> </div>
+      <div class="btn-close"> <span>×</span> </div>
       <ul class="story__slides">
         ${slides.map((slide, idx) => slide.type == "video" ? this._renderVideo(slide, idx) : this._renderImage(slide, idx)).join('')}
       </ul>
