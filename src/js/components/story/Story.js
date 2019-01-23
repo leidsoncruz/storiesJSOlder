@@ -1,17 +1,15 @@
 import screenfull from 'screenfull';
 
-import Cover from './Cover';
-import Items from './Items';
-import { createModal } from '../Utils';
+import Cover from '../cover/Cover';
+import Items from '../items/Items';
+import { createModal } from '../../Utils';
 
 export default class Story extends HTMLElement {
   constructor(story){
     super();
     this.story = story;
     this.classList.add('story');
-    this.index = this.getAttribute('data-index');
-    this.addEventListener('click', this._openStory.bind(this))
-    this._render();
+    this.addEventListener('click', this._openStory.bind(this));
   }
 
   _openStory(event){
@@ -23,6 +21,7 @@ export default class Story extends HTMLElement {
   }
 
   _render(){
+    const index = this.getAttribute('data-index');
     const preview = this.story.preview || this.story.slides[0].preview || this.story.slides[0].src;
     const title = this.story.title;
     const cover = new Cover(preview, title);

@@ -1,4 +1,4 @@
-import Story from './Story';
+import Story from '../story/Story';
 
 class Wrapper extends HTMLElement {
   constructor(options) {
@@ -13,6 +13,7 @@ class Wrapper extends HTMLElement {
     const _story = new Story(story);
     _story.setAttribute('data-index', index);
     this.appendChild(_story);
+    _story._render();
   }
 
   _render() {

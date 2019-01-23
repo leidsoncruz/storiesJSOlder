@@ -1,4 +1,4 @@
-import { exit } from '../Utils';
+import { exit } from '../../Utils';
 
 export default class ButtonClose extends HTMLElement {
   constructor(){

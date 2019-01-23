@@ -3,16 +3,16 @@
 import screenfull from 'screenfull';
 import '../scss/Stories.scss';
 
-import Wrapper from './components/Wrapper';
-import Story from './components/Story';
-import Cover from './components/Cover';
-import Items from './components/Items';
-import ButtonNext from './components/BtnNext';
-import ButtonPrevious from './components/BtnPrev';
-import ButtonClose from './components/BtnClose';
-import ProgressesBar from './components/ProgressesBar';
-import { SlideImage, SlideVideo } from './components/Slide';
-import Slides from './components/Slides';
+import Wrapper from './components/wrapper/Wrapper';
+import Story from './components/story/Story';
+import Cover from './components/cover/Cover';
+import Items from './components/items/Items';
+import ButtonNext from './components/buttons/BtnNext';
+import ButtonPrevious from './components/buttons/BtnPrev';
+import ButtonClose from './components/buttons/BtnClose';
+import ProgressesBar from './components/progressBar/ProgressesBar';
+import { SlideImage, SlideVideo } from './components/slides/Slide';
+import Slides from './components/slides/Slides';
 
 export const StoriesJS = (wrapper, options) => {
   const optionsDefault = {

@@ -1,8 +1,8 @@
-import ButtonNext from './BtnNext';
-import ButtonPrevious from './BtnPrev';
-import ButtonClose from './BtnClose';
-import ProgressesBar from './ProgressesBar';
-import Slides from './Slides';
+import ButtonNext from '../buttons/BtnNext';
+import ButtonPrevious from '../buttons/BtnPrev';
+import ButtonClose from '../buttons/BtnClose';
+import ProgressesBar from '../progressBar/ProgressesBar';
+import Slides from '../slides/Slides';
 
 export default class Items extends HTMLElement {
   constructor(story){
