@@ -1,8 +1,21 @@
-class Slide extends HTMLElement{
+export default class SlideBase extends HTMLElement{
   constructor(slide){
     super();
     this.slide = slide;
     this.classList.add('story__item');
+  }
+
+  static get observedAttributes() {
+    return ['active'];
+  }
+
+  attributeChangedCallback(name, oldValue, newValue) {
+    if(name === "active" && newValue === "true"){
+      debugger;
+    }
+  }
+
+  _init(){
     this._render();
     this._bindEvents();
   }
@@ -20,17 +33,5 @@ class Slide extends HTMLElement{
 
   _touchEndtItem(element){
     console.log('end',element);
-  }
-}
-
-export class SlideImage extends Slide {
-  _render(){
-    this.innerHTML = `<img src=${this.slide.src} /> <span>${this.slide.title}</span>`;
-  }
-}
-
-export class SlideVideo extends Slide {
-  _render(){
-    this.innerHTML = `<video src="${this.slide.src}" preload="auto"></video>`;
   }
 }

@@ -1,6 +1,7 @@
 export const createModal = () => {
   let modal = document.createElement('div');
   modal.classList.add('modal', 'modal-stories');
+  document.body.appendChild(modal);
   return modal;
 }
 

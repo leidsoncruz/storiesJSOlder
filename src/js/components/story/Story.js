@@ -13,8 +13,8 @@ export default class Story extends HTMLElement {
   }
 
   _openStory(event){
-    const modal = createModal();
-    document.body.appendChild(modal);
+    const hasModal = document.querySelector('.modal.modal-stories');
+    const modal = hasModal ? document.querySelector('.modal.modal-stories') : createModal();
     const items = new Items(this.story);
     modal.appendChild(items);
     // screenfull.request(modal);

@@ -11,8 +11,10 @@ import ButtonNext from './components/buttons/BtnNext';
 import ButtonPrevious from './components/buttons/BtnPrev';
 import ButtonClose from './components/buttons/BtnClose';
 import ProgressesBar from './components/progressBar/ProgressesBar';
-import { SlideImage, SlideVideo } from './components/slides/Slide';
 import Slides from './components/slides/Slides';
+import ImageSlide from './components/slides/ImageSlide';
+import VideoSlide from './components/slides/VideoSlide';
+
 
 export const StoriesJS = (wrapper, options) => {
   const optionsDefault = {
@@ -60,8 +62,8 @@ export const StoriesJS = (wrapper, options) => {
     return;
   }
 
-  customElements.define('story-image', SlideImage);
-  customElements.define('story-video', SlideVideo);
+  customElements.define('slide-image', ImageSlide);
+  customElements.define('slide-video', VideoSlide);
   customElements.define('story-slides', Slides);
   customElements.define('progresses-bar', ProgressesBar);
   customElements.define('btn-prev', ButtonPrevious);

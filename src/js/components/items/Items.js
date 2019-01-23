@@ -10,12 +10,6 @@ export default class Items extends HTMLElement {
     this.slides = story.slides;
     this.classList.add('story__items');
     this._render();
-    this._init();
-  }
-
-  _init(){
-    this.activeSlide = this.querySelector('.story__item.active') || this.querySelector('.story__item');
-    this.activeSlide.classList.add('active');
   }
 
   _render(){
@@ -23,13 +17,15 @@ export default class Items extends HTMLElement {
     const btnNext = new ButtonNext();
     const btnClose = new ButtonClose();
     const progressesBar = new ProgressesBar(this.slides.length);
-    const slides = new Slides(this.slides);
 
     this.appendChild(btnPrev);
     this.appendChild(btnNext);
     this.appendChild(btnClose);
     this.appendChild(progressesBar);
+
+    const slides = new Slides(this.slides);
     this.appendChild(slides);
+    slides._init();
   }
 
 }
