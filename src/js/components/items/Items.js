@@ -25,7 +25,7 @@ export default class Items extends HTMLElement {
 
     const slides = new Slides(this.slides);
     this.appendChild(slides);
-    slides._init();
+    slides.init();
   }
 
 }

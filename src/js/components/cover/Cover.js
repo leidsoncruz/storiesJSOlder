@@ -6,7 +6,7 @@ export default class Cover extends HTMLElement {
     this.classList.add('story__cover');
   }
 
-  _render(){
+  render(){
     this.innerHTML = `<img src=${this.preview} alt=${this.title} />`
   }
 }

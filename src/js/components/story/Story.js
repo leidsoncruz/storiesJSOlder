@@ -20,12 +20,12 @@ export default class Story extends HTMLElement {
     // screenfull.request(modal);
   }
 
-  _render(){
+  render(){
     const index = this.getAttribute('data-index');
     const preview = this.story.preview || this.story.slides[0].preview || this.story.slides[0].src;
     const title = this.story.title;
     const cover = new Cover(preview, title);
     this.appendChild(cover);
-    cover._render();
+    cover.render();
   }
 }

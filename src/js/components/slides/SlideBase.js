@@ -11,11 +11,13 @@ export default class SlideBase extends HTMLElement{
 
   attributeChangedCallback(name, oldValue, newValue) {
     if(name === "active" && newValue === "true"){
-      debugger;
+      const index = this.getAttribute('data-index');
+      const progressBar = this.parentElement.parentElement.getElementsByTagName('progresses-bar')[0];
+      progressBar.startProgress(index);
     }
   }
 
-  _init(){
+  init(){
     this._render();
     this._bindEvents();
   }

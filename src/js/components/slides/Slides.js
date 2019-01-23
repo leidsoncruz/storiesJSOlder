@@ -6,16 +6,24 @@ export default class Slides extends HTMLElement {
     super();
     this.slides = slides;
     this.classList.add("story__slides");
-    // this._setActiveItem();
   }
 
-  _init(){
+  init(){
     this._render();
     this._setActiveItem();
   }
 
-  _setActiveItem(){
-    this.activeSlide = this.querySelector('.story__item.active') || this.querySelector('.story__item');
+  next(){
+    const nextSlide = this.activeSlide.nextElementSibling;
+    if(nextSlide){
+      this.activeSlide.classList.remove('active');
+      this.activeSlide.removeAttribute('active');
+      this._setActiveItem(nextSlide)
+    }
+  }
+
+  _setActiveItem(item=null){
+    this.activeSlide = item || this.querySelector('.story__item.active') || this.querySelector('.story__item');
     this.activeSlide.classList.add('active');
     this.activeSlide.setAttribute('active', true);
   }
@@ -24,7 +32,7 @@ export default class Slides extends HTMLElement {
     const _slide = slide.type === "video" ? new VideoSlide(slide) : new ImageSlide(slide);
     _slide.setAttribute('data-index', index+1);
     this.appendChild(_slide);
-    _slide._init();
+    _slide.init();
   }
 
   _render(){
