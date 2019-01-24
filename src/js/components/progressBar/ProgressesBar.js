@@ -12,6 +12,7 @@ export default class ProgressesBar extends HTMLElement {
     const id = setInterval(_incrementWidth.bind(this), 15);
 
     function _incrementWidth(){
+      console.log('estou rodando');
       if(width >= 100){
         this.storySlides.next();
         clearInterval(id);

@@ -9,13 +9,19 @@ export default class Story extends HTMLElement {
     super();
     this.story = story;
     this.classList.add('story');
-    this.addEventListener('click', this._openStory.bind(this));
+    this.addEventListener('click', () => this.openStory());
   }
 
-  _openStory(event){
+  openStory(){
     const hasModal = document.querySelector('.modal.modal-stories');
     const modal = hasModal ? document.querySelector('.modal.modal-stories') : createModal();
     const items = new Items(this.story);
+    this.setAttribute('active', true);
+    items.setAttribute('data-index', this.getAttribute('data-index'));
+
+    const oldItems = modal.querySelector('story-items');
+    if(oldItems) modal.removeChild(oldItems);
+
     modal.appendChild(items);
     // screenfull.request(modal);
   }

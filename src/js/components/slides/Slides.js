@@ -19,6 +19,9 @@ export default class Slides extends HTMLElement {
       this.activeSlide.classList.remove('active');
       this.activeSlide.removeAttribute('active');
       this._setActiveItem(nextSlide)
+    }else{
+      const wrapper = document.querySelector('stories-wrapper');
+      wrapper.next();
     }
   }
 
