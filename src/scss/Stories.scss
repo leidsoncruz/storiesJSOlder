@@ -53,6 +53,7 @@
     padding: 0;
 
     > .btn-prev, .btn-next {
+      z-index: 1;
       height: 100%;
       width: 10%;
       background: transparent;
@@ -94,6 +95,7 @@
       position: absolute;
       top: 80px;
       right: 10px;
+      z-index: 2;
     }
 
 
