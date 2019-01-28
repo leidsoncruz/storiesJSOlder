@@ -30,17 +30,29 @@ export default class SlideBase extends HTMLElement{
   }
 
   _bindEvents(){
-    // this.addEventListener('touchstart', (event) => {event.preventDefault(); this._touchStartItem(this)});
-    // this.addEventListener('mousedown', (event) => {event.preventDefault(); this._touchStartItem(this)});
-    // this.addEventListener('touchend', (event) => {event.preventDefault(); this._touchEndtItem(this)});
-    // this.addEventListener('mouseup', (event) => {event.preventDefault(); this._touchEndtItem(this)});
+    this.addEventListener('touchstart', (event) => {event.preventDefault(); this._touchStartItem(this)});
+    this.addEventListener('mousedown', (event) => {event.preventDefault(); this._touchStartItem(this)});
+    this.addEventListener('touchend', (event) => {event.preventDefault(); this._touchEndtItem(this)});
+    this.addEventListener('mouseup', (event) => {event.preventDefault(); this._touchEndtItem(this)});
   }
 
   _touchStartItem(element){
-    console.log('start',element);
+    const wrapper = document.querySelector('stories-wrapper');
+    const storyItems = element.parentElement.parentElement;
+    const elements = storyItems.querySelectorAll('btn-prev,btn-next, btn-close, progresses-bar');
+    elements.forEach(item => item.style.display = 'none');
+    clearInterval(wrapper.gettIntervalId());
   }
 
   _touchEndtItem(element){
-    console.log('end',element);
+    const index = this.getAttribute('data-index');
+    const progressBar = this.parentElement.parentElement.getElementsByTagName('progresses-bar')[0];
+    const widthActiveBar = progressBar.querySelector('.progress-bar[active="true"] > .mybar').style.width;
+
+    const storyItems = element.parentElement.parentElement;
+    const elements = storyItems.querySelectorAll('btn-prev,btn-next, btn-close, progresses-bar');
+    elements.forEach(item => item.removeAttribute('style'));
+
+    progressBar.startProgress(index, parseInt(widthActiveBar, 10));
   }
 }

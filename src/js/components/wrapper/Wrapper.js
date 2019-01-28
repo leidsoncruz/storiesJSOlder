@@ -15,6 +15,10 @@ class Wrapper extends HTMLElement {
     this.idInterval = id;
   }
 
+  gettIntervalId(){
+    return this.idInterval;
+  }
+
   prev() {
     clearInterval(this.idInterval);
     const activeStory = this.querySelector('stories-story[active="true"]');
