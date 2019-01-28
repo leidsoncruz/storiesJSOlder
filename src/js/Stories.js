@@ -3,6 +3,8 @@
 import screenfull from 'screenfull';
 import '../scss/Stories.scss';
 
+import EventEmitter from './EventEmitter';
+
 import Wrapper from './components/wrapper/Wrapper';
 import Story from './components/story/Story';
 import Cover from './components/cover/Cover';
@@ -74,6 +76,8 @@ export const StoriesJS = (wrapper, options) => {
   customElements.define('stories-story', Story);
   customElements.define('stories-wrapper', Wrapper);
   const _wrapper = new Wrapper(options);
+
+  EventEmitter.defineTarget(_wrapper);
 
   getWrapperElement().appendChild(_wrapper);
 
