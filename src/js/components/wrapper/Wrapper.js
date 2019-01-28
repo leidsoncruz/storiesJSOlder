@@ -27,7 +27,7 @@ class Wrapper extends HTMLElement {
       activeStory.removeAttribute("active");
       prevStory.openStory();
     }else {
-      exit(this.idInterval);
+      exit();
     }
   }
 
@@ -39,7 +39,7 @@ class Wrapper extends HTMLElement {
       activeStory.removeAttribute("active");
       nextStory.openStory();
     }else {
-      exit(this.idInterval);
+      exit();
     }
   }
 

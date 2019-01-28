@@ -9,7 +9,8 @@ export const createModal = () => {
   return modal;
 }
 
-export const exit = (id) => {
+export const exit = () => {
+  const id = document.querySelector('stories-wrapper').gettIntervalId();
   if(id)clearInterval(id);
   const modal = document.querySelector('.modal.modal-stories');
   if(modal) modal.remove();
