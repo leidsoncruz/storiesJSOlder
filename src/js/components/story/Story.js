@@ -23,7 +23,8 @@ export default class Story extends HTMLElement {
     if(oldItems) modal.removeChild(oldItems);
 
     modal.appendChild(items);
-    // screenfull.request(modal);
+    screenfull.isFullscreen ? null : screenfull.request(modal);
+
   }
 
   render(){
