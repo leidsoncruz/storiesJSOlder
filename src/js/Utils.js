@@ -1,3 +1,5 @@
+import EventEmitter from './EventEmitter';
+
 export const CONSTANTS = {
   timer: 3
 }
@@ -14,4 +16,5 @@ export const exit = () => {
   if(id)clearInterval(id);
   const modal = document.querySelector('.modal.modal-stories');
   if(modal) modal.remove();
+  EventEmitter.dispatch('exitStory');
 }

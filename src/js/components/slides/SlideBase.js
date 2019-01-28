@@ -1,4 +1,5 @@
 import { CONSTANTS } from '../../Utils';
+import EventEmitter from '../../EventEmitter';
 
 export default class SlideBase extends HTMLElement{
   constructor(slide){

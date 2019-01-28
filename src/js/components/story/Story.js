@@ -3,13 +3,14 @@ import screenfull from 'screenfull';
 import Cover from '../cover/Cover';
 import Items from '../items/Items';
 import { createModal } from '../../Utils';
+import EventEmitter from '../../EventEmitter';
 
 export default class Story extends HTMLElement {
   constructor(story){
     super();
     this.story = story;
     this.classList.add('story');
-    this.addEventListener('click', () => this.openStory());
+    this._bindEvents();
   }
 
   openStory(){
@@ -25,6 +26,13 @@ export default class Story extends HTMLElement {
     modal.appendChild(items);
     screenfull.isFullscreen ? null : screenfull.request(modal);
 
+  }
+
+  _bindEvents() {
+    this.addEventListener('click', () => {
+      EventEmitter.dispatch('openStory');
+      this.openStory();
+    });
   }
 
   render(){

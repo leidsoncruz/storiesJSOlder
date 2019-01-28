@@ -1,5 +1,6 @@
 import ImageSlide from './ImageSlide';
 import VideoSlide from './VideoSlide';
+import EventEmitter from '../../EventEmitter';
 
 export default class Slides extends HTMLElement {
   constructor(slides) {
@@ -44,6 +45,7 @@ export default class Slides extends HTMLElement {
     this.activeSlide = item || this.querySelector('.story__item.active') || this.querySelector('.story__item');
     this.activeSlide.classList.add('active');
     this.activeSlide.setAttribute('active', true);
+    EventEmitter.dispatch('activeSlide', this.activeSlide);
   }
 
   _createSlide(slide, index){

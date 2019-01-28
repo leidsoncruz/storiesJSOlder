@@ -2,6 +2,8 @@ import Story from '../story/Story';
 
 import { exit } from '../../Utils';
 
+import EventEmitter from '../../EventEmitter';
+
 class Wrapper extends HTMLElement {
   constructor(options) {
     super();
@@ -24,6 +26,7 @@ class Wrapper extends HTMLElement {
     const activeStory = this.querySelector('stories-story[active="true"]');
     const prevStory = activeStory.previousElementSibling;
     if(prevStory){
+      EventEmitter.dispatch('previousStory');
       activeStory.removeAttribute("active");
       prevStory.openStory();
     }else {
@@ -36,6 +39,7 @@ class Wrapper extends HTMLElement {
     const activeStory = this.querySelector('stories-story[active="true"]');
     const nextStory = activeStory.nextElementSibling;
     if(nextStory){
+      EventEmitter.dispatch('nextStory');
       activeStory.removeAttribute("active");
       nextStory.openStory();
     }else {

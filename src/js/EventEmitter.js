@@ -27,6 +27,8 @@ const dispatch = (eventName = '', detail = null) => {
 
   _checkTargetDefined(target);
 
+  console.log('DISPATCH: ', eventName, detail);
+
   target.dispatchEvent(event);
 };
 
