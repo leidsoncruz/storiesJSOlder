@@ -1,3 +1,5 @@
+import { CONSTANTS } from '../../Utils';
+
 export default class SlideBase extends HTMLElement{
   constructor(slide){
     super();
@@ -9,11 +11,16 @@ export default class SlideBase extends HTMLElement{
     return ['active'];
   }
 
+  _start(timer=CONSTANTS.timer){
+    const index = this.getAttribute('data-index');
+    const progressBar = this.parentElement.parentElement.getElementsByTagName('progresses-bar')[0];
+    progressBar.setDuration(timer);
+    progressBar.startProgress(index);
+  }
+
   attributeChangedCallback(name, oldValue, newValue) {
     if(name === "active" && newValue === "true"){
-      const index = this.getAttribute('data-index');
-      const progressBar = this.parentElement.parentElement.getElementsByTagName('progresses-bar')[0];
-      progressBar.startProgress(index);
+      this._start();
     }
   }
 

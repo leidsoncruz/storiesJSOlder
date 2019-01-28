@@ -23,6 +23,10 @@ export default class ProgressesBar extends HTMLElement {
     this.activeBar.style.width = '100%';
   }
 
+  setDuration(timer){
+    this.timer = timer;
+  }
+
   startProgress(index, width=0){
     this.activeBar = this.querySelector(`.progress-bar[data-index="${index}"] > .mybar`);
     this.activeBar.parentElement.setAttribute("active", true);
@@ -30,7 +34,7 @@ export default class ProgressesBar extends HTMLElement {
 
     clearInterval(this.id);
 
-    this.id = setInterval(_incrementWidth.bind(this), 15);
+    this.id = setInterval(_incrementWidth.bind(this), Math.floor(this.timer)*10);
     this.wrapper.setIntervalId(this.id);
 
     function _incrementWidth(){
