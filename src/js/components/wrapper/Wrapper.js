@@ -11,14 +11,31 @@ class Wrapper extends HTMLElement {
     this._render();
   }
 
+  setIntervalId(id) {
+    this.idInterval = id;
+  }
+
+  prev() {
+    clearInterval(this.idInterval);
+    const activeStory = this.querySelector('stories-story[active="true"]');
+    const prevStory = activeStory.previousElementSibling;
+    if(prevStory){
+      activeStory.removeAttribute("active");
+      prevStory.openStory();
+    }else {
+      exit(this.idInterval);
+    }
+  }
+
   next(){
+    clearInterval(this.idInterval);
     const activeStory = this.querySelector('stories-story[active="true"]');
     const nextStory = activeStory.nextElementSibling;
     if(nextStory){
       activeStory.removeAttribute("active");
       nextStory.openStory();
     }else {
-      exit();
+      exit(this.idInterval);
     }
   }
 

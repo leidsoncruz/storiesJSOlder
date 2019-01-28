@@ -3,19 +3,40 @@ export default class ProgressesBar extends HTMLElement {
     super();
     this.classList.add('progresses-bars');
     this.length = length;
+    this.id = 0;
     this._render();
+    this.wrapper = document.querySelector('stories-wrapper');
+  }
+
+  removeActiveBar(){
+    this.activeBar.parentElement.removeAttribute('active');
+  }
+
+  toBeginning(){
+    this.activeBar = this.querySelector('.progress-bar[active="true"] > .mybar');
+    this.activeBar.style.width = '0%';
+    this.removeActiveBar();
+  }
+
+  toEnd(){
+    this.activeBar = this.querySelector('.progress-bar[active="true"] > .mybar');
+    this.activeBar.style.width = '100%';
   }
 
   startProgress(index, width=0){
     this.activeBar = this.querySelector(`.progress-bar[data-index="${index}"] > .mybar`);
+    this.activeBar.parentElement.setAttribute("active", true);
     this.storySlides = this.parentElement.querySelector('.story__slides');
-    const id = setInterval(_incrementWidth.bind(this), 15);
+
+    clearInterval(this.id);
+
+    this.id = setInterval(_incrementWidth.bind(this), 15);
+    this.wrapper.setIntervalId(this.id);
 
     function _incrementWidth(){
-      console.log('estou rodando');
       if(width >= 100){
+        clearInterval(this.id);
         this.storySlides.next();
-        clearInterval(id);
       }else{
         width+=1;
         this.activeBar.style.width = `${width}%`;

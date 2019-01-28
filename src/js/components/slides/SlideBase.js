@@ -23,10 +23,10 @@ export default class SlideBase extends HTMLElement{
   }
 
   _bindEvents(){
-    this.addEventListener('touchstart', (event) => {event.preventDefault(); this._touchStartItem(this)});
-    this.addEventListener('mousedown', (event) => {event.preventDefault(); this._touchStartItem(this)});
-    this.addEventListener('touchend', (event) => {event.preventDefault(); this._touchEndtItem(this)});
-    this.addEventListener('mouseup', (event) => {event.preventDefault(); this._touchEndtItem(this)});
+    // this.addEventListener('touchstart', (event) => {event.preventDefault(); this._touchStartItem(this)});
+    // this.addEventListener('mousedown', (event) => {event.preventDefault(); this._touchStartItem(this)});
+    // this.addEventListener('touchend', (event) => {event.preventDefault(); this._touchEndtItem(this)});
+    // this.addEventListener('mouseup', (event) => {event.preventDefault(); this._touchEndtItem(this)});
   }
 
   _touchStartItem(element){

@@ -13,9 +13,24 @@ export default class Slides extends HTMLElement {
     this._setActiveItem();
   }
 
+  prev(){
+    const prevSlide = this.activeSlide.previousElementSibling;
+    if(prevSlide){
+      this.activeSlide.classList.remove('active');
+      this.activeSlide.removeAttribute('active');
+      this._setActiveItem(prevSlide);
+    }else{
+      const wrapper = document.querySelector('stories-wrapper');
+      wrapper.prev();
+    }
+  }
+
   next(){
     const nextSlide = this.activeSlide.nextElementSibling;
     if(nextSlide){
+      const progressesBar = this.parentElement.querySelector('progresses-bar');
+      progressesBar.removeActiveBar();
+
       this.activeSlide.classList.remove('active');
       this.activeSlide.removeAttribute('active');
       this._setActiveItem(nextSlide)
