@@ -1,38 +1,56 @@
-let target;
+let EMITTER = {
+  target: null,
+  listeners: {}
+};
 
 const _checkTargetDefined = (target) => {
   if (!target) {
-    throw new Error('EventEmitter \'Target\' is not defined. Call method \'defineTarget\' with a valid element as parameter.');
+    throw new Error('EventEmitter \'Target\' is not defined. Call method \'define\' with a valid element as parameter.');
   }
 }
 
-const defineTarget = (element) => {
-  target = element;
+const define = (element) => {
+  EMITTER.target = element;
 };
 
 const on = (eventName = '', callback = () => {}) => {
-  _checkTargetDefined(target);
+  _checkTargetDefined(EMITTER.target);
 
-  target.addEventListener(eventName, callback);
+  EMITTER.target.addEventListener(eventName, callback);
+  EMITTER.listeners[eventName] = callback;
+
+  console.log('emitter[on]: ', eventName, callback.name);
 };
 
-const off = (eventName = '', callback = () => {}) => {
-  _checkTargetDefined(target);
+const off = (eventName = '') => {
+  _checkTargetDefined(EMITTER.target);
 
-  target.removeEventListener(eventName, callback)
+  if (EMITTER.listeners[eventName]) {
+    EMITTER.target.removeEventListener(eventName, EMITTER.listeners[eventName]);
+    EMITTER.listeners[eventName] = null;
+  }
+
+  console.log('emitter[off]: ', eventName);
 };
 
 const dispatch = (eventName = '', detail = null) => {
   let event = new CustomEvent(eventName, { detail });
 
-  _checkTargetDefined(target);
+  _checkTargetDefined(EMITTER.target);
 
-  console.log('DISPATCH: ', eventName, detail);
+  EMITTER.target.dispatchEvent(event);
 
-  target.dispatchEvent(event);
+  console.log('emitter[dispatch]: ', eventName, detail, !EMITTER.listeners[eventName] ? 'Not listened' : 'Listened');
 };
 
+const clear = (...args) => {
+  const events = args.length > 0 ? args : Object.keys(EMITTER.listeners);
+
+  events.forEach(off);
+
+  console.log('emitter[clear]: ', events, EMITTER.listeners);
+};
 
 export default {
-  defineTarget, on, off, dispatch
+  define, on, off, dispatch, clear
 };
