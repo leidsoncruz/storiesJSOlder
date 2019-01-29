@@ -11,41 +11,31 @@ export default class Slides extends HTMLElement {
 
   init(){
     this._render();
+    this._bindCustomEvents();
     this._setActiveItem();
   }
 
   prev(){
-    const prevSlide = this.activeSlide.previousElementSibling;
-    if(prevSlide){
-      this.activeSlide.classList.remove('active');
-      this.activeSlide.removeAttribute('active');
-      this._setActiveItem(prevSlide);
-    }else{
-      const wrapper = document.querySelector('stories-wrapper');
-      wrapper.prev();
-    }
+    EventEmitter.dispatch('previousSlide');
   }
 
   next(){
-    const nextSlide = this.activeSlide.nextElementSibling;
-    if(nextSlide){
-      const progressesBar = this.parentElement.querySelector('progresses-bar');
-      progressesBar.removeActiveBar();
+    EventEmitter.dispatch('nextSlide');
+  }
 
+  _deactiveActualSlide() {
+    if (this.activeSlide) {
       this.activeSlide.classList.remove('active');
       this.activeSlide.removeAttribute('active');
-      this._setActiveItem(nextSlide)
-    }else{
-      const wrapper = document.querySelector('stories-wrapper');
-      wrapper.next();
     }
   }
 
   _setActiveItem(item=null){
+    this._deactiveActualSlide();
     this.activeSlide = item || this.querySelector('.story__item.active') || this.querySelector('.story__item');
     this.activeSlide.classList.add('active');
     this.activeSlide.setAttribute('active', true);
-    EventEmitter.dispatch('activeSlide', this.activeSlide);
+    EventEmitter.dispatch('activeSlide');
   }
 
   _createSlide(slide, index){
@@ -53,6 +43,37 @@ export default class Slides extends HTMLElement {
     _slide.setAttribute('data-index', index+1);
     this.appendChild(_slide);
     _slide.init();
+  }
+
+  _onNextSlide() {
+    const nextSlide  = this.activeSlide.nextElementSibling;
+
+    if (nextSlide) {
+      const progressesBar = this.parentElement.querySelector('progresses-bar');
+      progressesBar.removeActiveBar();
+      this._setActiveItem(nextSlide);
+    } else {
+      const wrapper = document.querySelector('stories-wrapper');
+      wrapper.next();
+    }
+  }
+
+  _onPreviousSlide() {
+    const previousSlide = this.activeSlide.previousElementSibling;
+
+    if(previousSlide){
+      this._setActiveItem(previousSlide);
+    }else{
+      const wrapper = document.querySelector('stories-wrapper');
+      wrapper.prev();
+    }
+  }
+
+  _bindCustomEvents() {
+    EventEmitter.clear('nextSlide', 'previousSlide');
+
+    EventEmitter.on('nextSlide', this._onNextSlide.bind(this));
+    EventEmitter.on('previousSlide', this._onPreviousSlide.bind(this));
   }
 
   _render(){
