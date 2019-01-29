@@ -77,7 +77,7 @@ export const StoriesJS = (wrapper, options) => {
   customElements.define('stories-wrapper', Wrapper);
   const _wrapper = new Wrapper(options);
 
-  EventEmitter.defineTarget(_wrapper);
+  EventEmitter.define(_wrapper);
 
   getWrapperElement().appendChild(_wrapper);
 
