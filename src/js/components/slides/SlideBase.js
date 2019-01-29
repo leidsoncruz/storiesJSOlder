@@ -41,6 +41,9 @@ export default class SlideBase extends HTMLElement{
     const wrapper = document.querySelector('stories-wrapper');
     const storyItems = element.parentElement.parentElement;
     const elements = storyItems.querySelectorAll('btn-prev,btn-next, btn-close, progresses-bar');
+
+    EventEmitter.dispatch('pauseSlide');
+
     elements.forEach(item => item.style.display = 'none');
     clearInterval(wrapper.gettIntervalId());
   }
@@ -52,6 +55,9 @@ export default class SlideBase extends HTMLElement{
 
     const storyItems = element.parentElement.parentElement;
     const elements = storyItems.querySelectorAll('btn-prev,btn-next, btn-close, progresses-bar');
+
+    EventEmitter.dispatch('resumeSlide');
+
     elements.forEach(item => item.removeAttribute('style'));
 
     progressBar.startProgress(index, parseInt(widthActiveBar, 10));
