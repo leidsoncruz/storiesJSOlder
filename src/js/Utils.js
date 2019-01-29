@@ -17,4 +17,5 @@ export const exit = () => {
   const modal = document.querySelector('.modal.modal-stories');
   if(modal) modal.remove();
   EventEmitter.dispatch('exitStory');
+  EventEmitter.clear();
 }
