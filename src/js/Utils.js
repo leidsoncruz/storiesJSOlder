@@ -10,12 +10,3 @@ export const createModal = () => {
   document.body.appendChild(modal);
   return modal;
 }
-
-export const exit = () => {
-  const id = document.querySelector('stories-wrapper').gettIntervalId();
-  if(id)clearInterval(id);
-  const modal = document.querySelector('.modal.modal-stories');
-  if(modal) modal.remove();
-  EventEmitter.dispatch('exitStory');
-  EventEmitter.clear();
-}

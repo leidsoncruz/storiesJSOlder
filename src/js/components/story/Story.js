@@ -11,6 +11,7 @@ export default class Story extends HTMLElement {
     this.story = story;
     this.classList.add('story');
     this._bindEvents();
+    this._bindCustomEvents();
   }
 
   openStory(){
@@ -25,7 +26,14 @@ export default class Story extends HTMLElement {
 
     modal.appendChild(items);
     screenfull.isFullscreen ? null : screenfull.request(modal);
+  }
 
+  onExitStory() {
+      const id = document.querySelector('stories-wrapper').gettIntervalId();
+      if(id)window.clearInterval(id);
+      const modal = document.querySelector('.modal.modal-stories');
+      if(modal) modal.remove();
+      // EventEmitter.clear();
   }
 
   _bindEvents() {
@@ -33,6 +41,11 @@ export default class Story extends HTMLElement {
       EventEmitter.dispatch('openStory');
       this.openStory();
     });
+  }
+
+  _bindCustomEvents() {
+    EventEmitter.clear('exitStory');
+    EventEmitter.on('exitStory', this.onExitStory.bind(this));
   }
 
   render(){

@@ -1,7 +1,5 @@
 import Story from '../story/Story';
 
-import { exit } from '../../Utils';
-
 import EventEmitter from '../../EventEmitter';
 
 class Wrapper extends HTMLElement {
