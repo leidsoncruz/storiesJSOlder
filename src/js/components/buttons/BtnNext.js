@@ -1,3 +1,5 @@
+import EventEmitter from '../../EventEmitter';
+
 export default class ButtonNext extends HTMLElement {
   constructor(){
     super();
@@ -9,6 +11,6 @@ export default class ButtonNext extends HTMLElement {
     const storySlides = this.parentElement.querySelector('story-slides');
     const progressesBar = this.parentElement.querySelector('progresses-bar');
     progressesBar.toEnd();
-    storySlides.next();
+    EventEmitter.dispatch('nextSlide');
   }
 }

@@ -9,18 +9,19 @@ export default class Slides extends HTMLElement {
     this.classList.add("story__slides");
   }
 
+  get previousSlide () {
+    return this.activeSlide.previousElementSibling;
+  }
+
+  get nextSlide() {
+    return this.activeSlide.nextElementSibling;
+  }
+
   init(){
     this._render();
     this._bindCustomEvents();
-    this._setActiveItem();
-  }
 
-  prev(){
-    EventEmitter.dispatch('previousSlide');
-  }
-
-  next(){
-    EventEmitter.dispatch('nextSlide');
+    EventEmitter.dispatch('activeItem', null);
   }
 
   _deactiveActualSlide() {
@@ -30,12 +31,11 @@ export default class Slides extends HTMLElement {
     }
   }
 
-  _setActiveItem(item=null){
+  _onActiveItem ({ detail }) {
     this._deactiveActualSlide();
-    this.activeSlide = item || this.querySelector('.story__item.active') || this.querySelector('.story__item');
+    this.activeSlide = detail || this.querySelector('.story__item.active') || this.querySelector('.story__item');
     this.activeSlide.classList.add('active');
     this.activeSlide.setAttribute('active', true);
-    EventEmitter.dispatch('activeSlide');
   }
 
   _createSlide(slide, index){
@@ -46,32 +46,27 @@ export default class Slides extends HTMLElement {
   }
 
   _onNextSlide() {
-    const nextSlide  = this.activeSlide.nextElementSibling;
-
-    if (nextSlide) {
+    if (this.nextSlide) {
       const progressesBar = this.parentElement.querySelector('progresses-bar');
       progressesBar.removeActiveBar();
-      this._setActiveItem(nextSlide);
+      EventEmitter.dispatch('activeItem', this.nextSlide);
     } else {
-      const wrapper = document.querySelector('stories-wrapper');
-      wrapper.next();
+      EventEmitter.dispatch('nextStory');
     }
   }
 
   _onPreviousSlide() {
-    const previousSlide = this.activeSlide.previousElementSibling;
-
-    if(previousSlide){
-      this._setActiveItem(previousSlide);
+    if(this.previousSlide){
+      EventEmitter.dispatch('activeItem', this.previousSlide);
     }else{
-      const wrapper = document.querySelector('stories-wrapper');
-      wrapper.prev();
+      EventEmitter.dispatch('previousStory');
     }
   }
 
   _bindCustomEvents() {
-    EventEmitter.clear('nextSlide', 'previousSlide');
+    EventEmitter.clear('activeItem', 'nextSlide', 'previousSlide');
 
+    EventEmitter.on('activeItem', this._onActiveItem.bind(this));
     EventEmitter.on('nextSlide', this._onNextSlide.bind(this));
     EventEmitter.on('previousSlide', this._onPreviousSlide.bind(this));
   }

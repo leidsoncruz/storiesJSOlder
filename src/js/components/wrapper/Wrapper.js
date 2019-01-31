@@ -12,6 +12,7 @@ class Wrapper extends HTMLElement {
     EventEmitter.define(this);
 
     this._render();
+    this._bindCustomEvents();
   }
 
   setIntervalId(id) {
@@ -22,30 +23,30 @@ class Wrapper extends HTMLElement {
     return this.idInterval;
   }
 
-  prev() {
+  _updateStory(story) {
+    story.removeAttribute('data-active');
+  }
+
+  _changeStory(axis) {
+    const story = this.querySelector('stories-story[data-active="true"]');
+
     clearInterval(this.idInterval);
-    const activeStory = this.querySelector('stories-story[active="true"]');
-    const prevStory = activeStory.previousElementSibling;
-    if(prevStory){
-      EventEmitter.dispatch('previousStory');
-      activeStory.removeAttribute("active");
-      prevStory.openStory();
-    }else {
-      exit();
+
+    if(story[`${axis}ElementSibling`]){
+      this._updateStory(story);
+
+      EventEmitter.dispatch('openStory');
+    } else {
+      EventEmitter.dispatch('exitStory');
     }
   }
 
-  next(){
-    clearInterval(this.idInterval);
-    const activeStory = this.querySelector('stories-story[active="true"]');
-    const nextStory = activeStory.nextElementSibling;
-    if(nextStory){
-      EventEmitter.dispatch('nextStory');
-      activeStory.removeAttribute("active");
-      nextStory.openStory();
-    }else {
-      exit();
-    }
+  _onNextStory() {
+    this._changeStory('next');
+  }
+
+  _onPreviousStory() {
+    this._changeStory('previous');
   }
 
   _createStory(story, index) {
@@ -53,6 +54,12 @@ class Wrapper extends HTMLElement {
     _story.setAttribute('data-index', index);
     this.appendChild(_story);
     _story.render();
+  }
+
+  _bindCustomEvents() {
+    EventEmitter.clear('nextStory', 'previousStory');
+    EventEmitter.on('nextStory', this._onNextStory.bind(this));
+    EventEmitter.on('previousStory', this._onPreviousStory.bind(this));
   }
 
   _render() {

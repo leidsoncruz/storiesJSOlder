@@ -1,3 +1,5 @@
+import EventEmitter from "../../EventEmitter";
+
 export default class ProgressesBar extends HTMLElement {
   constructor(length){
     super();
@@ -30,7 +32,6 @@ export default class ProgressesBar extends HTMLElement {
   startProgress(index, width=0){
     this.activeBar = this.querySelector(`.progress-bar[data-index="${index}"] > .mybar`);
     this.activeBar.parentElement.setAttribute("active", true);
-    this.storySlides = this.parentElement.querySelector('.story__slides');
 
     clearInterval(this.id);
 
@@ -40,7 +41,7 @@ export default class ProgressesBar extends HTMLElement {
     function _incrementWidth(){
       if(width >= 100){
         clearInterval(this.id);
-        this.storySlides.next();
+        EventEmitter.dispatch('nextSlide');
       }else{
         width+=1;
         this.activeBar.style.width = `${width}%`;

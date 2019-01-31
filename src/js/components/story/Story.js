@@ -14,11 +14,11 @@ export default class Story extends HTMLElement {
     this._bindCustomEvents();
   }
 
-  openStory(){
+  onOpenStory(){
     const hasModal = document.querySelector('.modal.modal-stories');
     const modal = hasModal ? document.querySelector('.modal.modal-stories') : createModal();
     const items = new Items(this.story);
-    this.setAttribute('active', true);
+    this.setAttribute('data-active', true);
     items.setAttribute('data-index', this.getAttribute('data-index'));
 
     const oldItems = modal.querySelector('story-items');
@@ -37,15 +37,13 @@ export default class Story extends HTMLElement {
   }
 
   _bindEvents() {
-    this.addEventListener('click', () => {
-      EventEmitter.dispatch('openStory');
-      this.openStory();
-    });
+    this.addEventListener('click', this.onOpenStory.bind(this));
   }
 
   _bindCustomEvents() {
-    EventEmitter.clear('exitStory');
+    EventEmitter.clear('exitStory', 'openStory');
     EventEmitter.on('exitStory', this.onExitStory.bind(this));
+    EventEmitter.on('openStory', this.onOpenStory.bind(this));
   }
 
   render(){
