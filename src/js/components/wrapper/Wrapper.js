@@ -10,6 +10,9 @@ class Wrapper extends HTMLElement {
     this.classList.add('post-stories');
     this.options = options;
     this.stories = options.stories;
+
+    EventEmitter.define(this);
+
     this._render();
   }
 
