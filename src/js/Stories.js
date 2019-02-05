@@ -6,7 +6,7 @@ import '../scss/Stories.scss';
 import Wrapper from './components/wrapper/Wrapper';
 import Story from './components/story/Story';
 import Cover from './components/cover/Cover';
-import Items from './components/items/Items';
+import Modal from './components/modal/Modal';
 import ButtonNext from './components/buttons/BtnNext';
 import ButtonPrevious from './components/buttons/BtnPrev';
 import ButtonClose from './components/buttons/BtnClose';
@@ -33,7 +33,7 @@ export const StoriesJS = (wrapper, options) => {
   customElements.define('btn-prev', ButtonPrevious);
   customElements.define('btn-next', ButtonNext);
   customElements.define('btn-close', ButtonClose);
-  customElements.define('story-items', Items);
+  customElements.define('story-modal', Modal);
   customElements.define('story-cover', Cover);
   customElements.define('stories-story', Story);
   customElements.define('stories-wrapper', Wrapper);

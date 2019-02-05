@@ -8,6 +8,7 @@ class Wrapper extends HTMLElement {
     this.classList.add('post-stories');
     this.options = options;
     this.stories = options.stories;
+    this.instances = [];
 
     EventEmitter.define(this);
 
@@ -24,18 +25,18 @@ class Wrapper extends HTMLElement {
   }
 
   _updateStory(story) {
-    story.removeAttribute('data-active');
+    story.removeAttribute('active');
   }
 
   _changeStory(axis) {
     const story = this.querySelector('stories-story[data-active="true"]');
+    const target = story[`${axis}ElementSibling`];
 
     clearInterval(this.idInterval);
+    this._updateStory(story);
 
-    if(story[`${axis}ElementSibling`]){
-      this._updateStory(story);
-
-      EventEmitter.dispatch('openStory');
+    if(target){
+      EventEmitter.dispatch('openStory', this.instances[target.dataset.index]);
     } else {
       EventEmitter.dispatch('exitStory');
     }
@@ -54,6 +55,7 @@ class Wrapper extends HTMLElement {
     _story.setAttribute('data-index', index);
     this.appendChild(_story);
     _story.render();
+    return _story;
   }
 
   _bindCustomEvents() {
@@ -63,7 +65,7 @@ class Wrapper extends HTMLElement {
   }
 
   _render() {
-    this.stories.map(this._createStory.bind(this));
+    this.instances = this.stories.map(this._createStory.bind(this));
   }
 }
 

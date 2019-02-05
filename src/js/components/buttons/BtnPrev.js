@@ -1,3 +1,5 @@
+import EventEmitter from '../../EventEmitter';
+
 export default class ButtonPrevious extends HTMLElement {
   constructor(){
     super();
@@ -6,11 +8,10 @@ export default class ButtonPrevious extends HTMLElement {
   }
 
   _onPressPrev(){
-    const storySlides = this.parentElement.querySelector('story-slides');
     const progressesBar = this.parentElement.querySelector('progresses-bar');
 
     progressesBar.toBeginning();
-    storySlides.prev();
 
+    EventEmitter.dispatch('previousSlide');
   }
 }

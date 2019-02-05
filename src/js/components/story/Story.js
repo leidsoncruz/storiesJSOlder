@@ -1,7 +1,7 @@
 import screenfull from 'screenfull';
 
 import Cover from '../cover/Cover';
-import Items from '../items/Items';
+import Modal from '../modal/Modal';
 import { createModal } from '../../Utils';
 import EventEmitter from '../../EventEmitter';
 
@@ -14,36 +14,40 @@ export default class Story extends HTMLElement {
     this._bindCustomEvents();
   }
 
-  onOpenStory(){
-    const hasModal = document.querySelector('.modal.modal-stories');
-    const modal = hasModal ? document.querySelector('.modal.modal-stories') : createModal();
-    const items = new Items(this.story);
-    this.setAttribute('data-active', true);
-    items.setAttribute('data-index', this.getAttribute('data-index'));
-
-    const oldItems = modal.querySelector('story-items');
-    if(oldItems) modal.removeChild(oldItems);
-
-    modal.appendChild(items);
-    screenfull.isFullscreen ? null : screenfull.request(modal);
+  _onClickStory() {
+    EventEmitter.dispatch('openStory', this);
   }
 
-  onExitStory() {
+  _onOpenStory(event = {}){
+    const reference = (event && event.detail) || this;
+    const hasModal = document.querySelector('.modal.modal-stories');
+    const modalDIV = hasModal ? document.querySelector('.modal.modal-stories') : createModal();
+    const modalInstance = new Modal(reference.story);
+    reference.setAttribute('active', true);
+    modalInstance.setAttribute('data-index', reference.getAttribute('data-index'));
+
+    const oldItems = modalDIV.querySelector('story-modal');
+    if(oldItems) modalDIV.removeChild(oldItems);
+
+    modalDIV.appendChild(modalInstance);
+    screenfull.isFullscreen ? null : screenfull.request(modalDIV);
+  }
+
+  _onExitStory() {
       const id = document.querySelector('stories-wrapper').gettIntervalId();
       if(id)window.clearInterval(id);
       const modal = document.querySelector('.modal.modal-stories');
       if(modal) modal.remove();
-      // EventEmitter.clear();
   }
 
   _bindEvents() {
-    this.addEventListener('click', this.onOpenStory.bind(this));
+    this.addEventListener('click', this._onClickStory.bind(this));
   }
 
   _bindCustomEvents() {
     EventEmitter.clear('exitStory', 'openStory');
-    EventEmitter.on('exitStory', this.onExitStory.bind(this));
-    EventEmitter.on('openStory', this.onOpenStory.bind(this));
+    EventEmitter.on('exitStory', this._onExitStory.bind(this));
+    EventEmitter.on('openStory', this._onOpenStory.bind(this));
   }
 
   render(){

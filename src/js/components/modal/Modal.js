@@ -4,7 +4,7 @@ import ButtonClose from '../buttons/BtnClose';
 import ProgressesBar from '../progressBar/ProgressesBar';
 import Slides from '../slides/Slides';
 
-export default class Items extends HTMLElement {
+export default class Modal extends HTMLElement {
   constructor(story){
     super();
     this.slides = story.slides;
@@ -16,12 +16,12 @@ export default class Items extends HTMLElement {
     const btnPrev = new ButtonPrevious();
     const btnNext = new ButtonNext();
     const btnClose = new ButtonClose();
-    const progressesBar = new ProgressesBar(this.slides.length);
+    const progressBar = new ProgressesBar(this.slides.length);
 
     this.appendChild(btnPrev);
     this.appendChild(btnNext);
     this.appendChild(btnClose);
-    this.appendChild(progressesBar);
+    this.appendChild(progressBar);
 
     const slides = new Slides(this.slides);
     this.appendChild(slides);
