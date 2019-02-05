@@ -1,12 +1,12 @@
 export default class Cover extends HTMLElement {
-  constructor(preview, title){
+  constructor(preview, title) {
     super();
     this.preview = preview;
     this.title = title;
     this.classList.add('story__cover');
   }
 
-  render(){
-    this.innerHTML = `<img src=${this.preview} alt=${this.title} />`
+  render() {
+    this.innerHTML = `<img src=${this.preview} alt=${this.title} />`;
   }
 }

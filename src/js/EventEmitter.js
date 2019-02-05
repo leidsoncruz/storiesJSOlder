@@ -3,13 +3,13 @@ let EMITTER = {
   listeners: {}
 };
 
-const _checkTargetDefined = (target) => {
+const _checkTargetDefined = target => {
   if (!target) {
     throw new Error('EventEmitter \'Target\' is not defined. Call method \'define\' with a valid element as parameter.');
   }
-}
+};
 
-const define = (element) => {
+const define = element => {
   EMITTER.target = element;
 };
 

@@ -6,10 +6,10 @@ export default class Slides extends HTMLElement {
   constructor(slides) {
     super();
     this.slides = slides;
-    this.classList.add("story__slides");
+    this.classList.add('story__slides');
   }
 
-  get previousSlide () {
+  get previousSlide() {
     return this.activeSlide.previousElementSibling;
   }
 
@@ -17,7 +17,7 @@ export default class Slides extends HTMLElement {
     return this.activeSlide.nextElementSibling;
   }
 
-  init(){
+  init() {
     this._render();
     this._bindCustomEvents();
 
@@ -31,16 +31,16 @@ export default class Slides extends HTMLElement {
     }
   }
 
-  _onActiveItem ({ detail }) {
+  _onActiveItem({ detail }) {
     this._deactiveActualSlide();
     this.activeSlide = detail || this.querySelector('.story__item.active') || this.querySelector('.story__item');
     this.activeSlide.classList.add('active');
     this.activeSlide.setAttribute('active', true);
   }
 
-  _createSlide(slide, index){
-    const _slide = slide.type === "video" ? new VideoSlide(slide) : new ImageSlide(slide);
-    _slide.setAttribute('data-index', index+1);
+  _createSlide(slide, index) {
+    const _slide = slide.type === 'video' ? new VideoSlide(slide) : new ImageSlide(slide);
+    _slide.setAttribute('data-index', index + 1);
     this.appendChild(_slide);
     _slide.init();
   }
@@ -56,9 +56,9 @@ export default class Slides extends HTMLElement {
   }
 
   _onPreviousSlide() {
-    if(this.previousSlide){
+    if (this.previousSlide) {
       EventEmitter.dispatch('activeItem', this.previousSlide);
-    }else{
+    } else {
       EventEmitter.dispatch('previousStory');
     }
   }
@@ -71,7 +71,7 @@ export default class Slides extends HTMLElement {
     EventEmitter.on('previousSlide', this._onPreviousSlide.bind(this));
   }
 
-  _render(){
+  _render() {
     this.slides.map(this._createSlide.bind(this));
   }
 }

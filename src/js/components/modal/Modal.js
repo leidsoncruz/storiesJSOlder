@@ -5,14 +5,14 @@ import ProgressesBar from '../progressBar/ProgressesBar';
 import Slides from '../slides/Slides';
 
 export default class Modal extends HTMLElement {
-  constructor(story){
+  constructor(story) {
     super();
     this.slides = story.slides;
     this.classList.add('story__items');
     this._render();
   }
 
-  _render(){
+  _render() {
     const btnPrev = new ButtonPrevious();
     const btnNext = new ButtonNext();
     const btnClose = new ButtonClose();

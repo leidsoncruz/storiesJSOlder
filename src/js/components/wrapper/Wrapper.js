@@ -31,7 +31,7 @@ class Wrapper extends HTMLElement {
     EventEmitter.dispatch('stopProgress');
     this._updateStory(story);
 
-    if(target){
+    if (target) {
       EventEmitter.dispatch('openStory', this.instances[target.dataset.index]);
     } else {
       EventEmitter.dispatch('exitStory');

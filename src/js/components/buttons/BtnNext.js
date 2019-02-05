@@ -1,13 +1,13 @@
 import EventEmitter from '../../EventEmitter';
 
 export default class ButtonNext extends HTMLElement {
-  constructor(){
+  constructor() {
     super();
     this.classList.add('btn-next');
     this.addEventListener('click', this._onPressNext.bind(this));
   }
 
-  _onPressNext(){
+  _onPressNext() {
     const progressesBar = this.parentElement.querySelector('progresses-bar');
     progressesBar.toEnd();
     EventEmitter.dispatch('nextSlide');

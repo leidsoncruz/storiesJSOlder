@@ -6,7 +6,7 @@ import { createModal } from '../../Utils';
 import EventEmitter from '../../EventEmitter';
 
 export default class Story extends HTMLElement {
-  constructor(story){
+  constructor(story) {
     super();
     this.story = story;
     this.classList.add('story');
@@ -18,7 +18,7 @@ export default class Story extends HTMLElement {
     EventEmitter.dispatch('openStory', this);
   }
 
-  _onOpenStory(event = {}){
+  _onOpenStory(event = {}) {
     const reference = (event && event.detail) || this;
     const hasModal = document.querySelector('.modal.modal-stories');
     const modalDIV = hasModal ? document.querySelector('.modal.modal-stories') : createModal();
@@ -27,7 +27,9 @@ export default class Story extends HTMLElement {
     modalInstance.setAttribute('data-index', reference.getAttribute('data-index'));
 
     const oldItems = modalDIV.querySelector('story-modal');
-    if(oldItems) modalDIV.removeChild(oldItems);
+    if (oldItems) {
+      modalDIV.removeChild(oldItems);
+    }
 
     modalDIV.appendChild(modalInstance);
     screenfull.isFullscreen ? null : screenfull.request(modalDIV);
@@ -36,7 +38,9 @@ export default class Story extends HTMLElement {
   _onExitStory() {
     EventEmitter.dispatch('stopProgress');
     const modal = document.querySelector('.modal.modal-stories');
-    if(modal) modal.remove();
+    if (modal) {
+      modal.remove();
+    }
   }
 
   _bindEvents() {
@@ -49,7 +53,7 @@ export default class Story extends HTMLElement {
     EventEmitter.on('openStory', this._onOpenStory.bind(this));
   }
 
-  render(){
+  render() {
     const index = this.getAttribute('data-index');
     const preview = this.story.preview || this.story.slides[0].preview || this.story.slides[0].src;
     const title = this.story.title;

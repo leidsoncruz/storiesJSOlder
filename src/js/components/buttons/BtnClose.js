@@ -1,7 +1,7 @@
 import EventEmitter from '../../EventEmitter';
 
 export default class ButtonClose extends HTMLElement {
-  constructor(){
+  constructor() {
     super();
     this.classList.add('btn-close');
     this._bindEvents();
@@ -14,7 +14,7 @@ export default class ButtonClose extends HTMLElement {
     });
   }
 
-  _render(){
-    this.innerHTML = "<span>X</span>";
+  _render() {
+    this.innerHTML = '<span>X</span>';
   }
 }

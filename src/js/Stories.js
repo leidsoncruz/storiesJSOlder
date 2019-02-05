@@ -19,10 +19,10 @@ import VideoSlide from './components/slides/VideoSlide';
 export const StoriesJS = (wrapper, options) => {
   const getWrapperElement = () => {
     return document.querySelector(wrapper) ? wrapper : document.body;
-  }
+  };
 
   if (!(window.customElements && document.body.attachShadow)) {
-    getWrapperElement().innerHTML = "<b>Your browser doesn't support Shadow DOM and Custom Elements v1.</b>";
+    getWrapperElement().innerHTML = '<b>Your browser doesn\'t support Shadow DOM and Custom Elements v1.</b>';
     return;
   }
 
