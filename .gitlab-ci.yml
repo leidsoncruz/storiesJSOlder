@@ -1,0 +1,14 @@
+image: node:8.14-alpine
+
+cache:
+  paths:
+    - node_modules/
+
+stages:
+  - tests
+
+test:
+  stage: tests
+  script:
+    - npm install
+    - npm run test:ci
