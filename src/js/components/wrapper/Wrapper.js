@@ -29,7 +29,7 @@ class Wrapper extends HTMLElement {
   }
 
   _changeStory(axis) {
-    const story = this.querySelector('stories-story[data-active="true"]');
+    const story = this.querySelector('stories-story[active="true"]');
     const target = story[`${axis}ElementSibling`];
 
     clearInterval(this.idInterval);
