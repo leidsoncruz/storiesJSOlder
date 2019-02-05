@@ -38,14 +38,12 @@ export default class SlideBase extends HTMLElement{
   }
 
   _touchStartItem(element){
-    const wrapper = document.querySelector('stories-wrapper');
     const storyItems = element.parentElement.parentElement;
     const elements = storyItems.querySelectorAll('btn-prev,btn-next, btn-close, progresses-bar');
 
     EventEmitter.dispatch('pauseSlide');
 
     elements.forEach(item => item.style.display = 'none');
-    clearInterval(wrapper.gettIntervalId());
   }
 
   _touchEndtItem(element){

@@ -20,10 +20,6 @@ class Wrapper extends HTMLElement {
     this.idInterval = id;
   }
 
-  gettIntervalId(){
-    return this.idInterval;
-  }
-
   _updateStory(story) {
     story.removeAttribute('active');
   }
@@ -32,7 +28,7 @@ class Wrapper extends HTMLElement {
     const story = this.querySelector('stories-story[active="true"]');
     const target = story[`${axis}ElementSibling`];
 
-    clearInterval(this.idInterval);
+    EventEmitter.dispatch('stopProgress');
     this._updateStory(story);
 
     if(target){

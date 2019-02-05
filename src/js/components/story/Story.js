@@ -34,10 +34,9 @@ export default class Story extends HTMLElement {
   }
 
   _onExitStory() {
-      const id = document.querySelector('stories-wrapper').gettIntervalId();
-      if(id)window.clearInterval(id);
-      const modal = document.querySelector('.modal.modal-stories');
-      if(modal) modal.remove();
+    EventEmitter.dispatch('stopProgress');
+    const modal = document.querySelector('.modal.modal-stories');
+    if(modal) modal.remove();
   }
 
   _bindEvents() {

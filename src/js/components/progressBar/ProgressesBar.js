@@ -7,7 +7,7 @@ export default class ProgressesBar extends HTMLElement {
     this.length = length;
     this.id = 0;
     this._render();
-    this.wrapper = document.querySelector('stories-wrapper');
+    this._bindCustomEvents();
   }
 
   removeActiveBar(){
@@ -29,24 +29,33 @@ export default class ProgressesBar extends HTMLElement {
     this.timer = timer;
   }
 
+  _onStopProgress() {
+    if (this.id) {
+      window.clearInterval(this.id);
+    }
+  }
+
   startProgress(index, width=0){
     this.activeBar = this.querySelector(`.progress-bar[data-index="${index}"] > .mybar`);
     this.activeBar.parentElement.setAttribute("active", true);
 
-    clearInterval(this.id);
+    EventEmitter.dispatch('stopProgress');
 
     this.id = setInterval(_incrementWidth.bind(this), Math.floor(this.timer)*10);
-    this.wrapper.setIntervalId(this.id);
 
     function _incrementWidth(){
       if(width >= 100){
-        clearInterval(this.id);
+        EventEmitter.dispatch('stopProgress');
         EventEmitter.dispatch('nextSlide');
       }else{
         width+=1;
         this.activeBar.style.width = `${width}%`;
       }
     }
+  }
+
+  _bindCustomEvents() {
+    EventEmitter.on('stopProgress', this._onStopProgress.bind(this));
   }
 
   _render(){
