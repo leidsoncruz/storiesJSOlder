@@ -1,5 +1,3 @@
-'use strict';
-
 import screenfull from 'screenfull';
 import '../scss/Stories.scss';
 

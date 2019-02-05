@@ -7,6 +7,9 @@ module.exports = {
   "plugins": ["jest"],
   "parserOptions": {
     "sourceType": "module",
+    "ecmaFeatures": {
+      "impliedStrict": true
+    }
   },
   "extends": ["eslint:recommended", "plugin:jest/recommended"],
   "rules": {
@@ -20,6 +23,7 @@ module.exports = {
     "space-before-blocks": [1, "always"],
     "arrow-parens": [1, "as-needed"],
     "space-infix-ops": 1,
+    "strict": [1, "never"],
     "max-statements-per-line": [2, { "max": 1 }],
     "no-console": 2,
     "semi": 2,
