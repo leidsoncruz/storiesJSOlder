@@ -14,19 +14,23 @@ export default class ProgressesBar extends HTMLElement {
     this.activeBar.parentElement.removeAttribute('active');
   }
 
-  toBeginning() {
-    this.activeBar = this.querySelector('.progress-bar[active="true"] > .mybar');
-    this.activeBar.style.width = '0%';
+  setDuration(timer) {
+    this.timer = timer;
+  }
+
+  _setProgressWidth(width) {
+    if (this.activeBar) {
+      this.activeBar.style.width = `${width}%`;
+    }
+  }
+
+  _onToBeginning() {
+    this._setProgressWidth(0);
     this.removeActiveBar();
   }
 
-  toEnd() {
-    this.activeBar = this.querySelector('.progress-bar[active="true"] > .mybar');
-    this.activeBar.style.width = '100%';
-  }
-
-  setDuration(timer) {
-    this.timer = timer;
+  _onToEnd() {
+    this._setProgressWidth(100);
   }
 
   _onStopProgress() {
@@ -48,14 +52,16 @@ export default class ProgressesBar extends HTMLElement {
         EventEmitter.dispatch('stopProgress');
         EventEmitter.dispatch('nextSlide');
       } else {
-        width += 1;
-        this.activeBar.style.width = `${width}%`;
+        width+=1;
+        this._setProgressWidth(width);
       }
     }
   }
 
   _bindCustomEvents() {
     EventEmitter.on('stopProgress', this._onStopProgress.bind(this));
+    EventEmitter.on('toEnd', this._onToEnd.bind(this));
+    EventEmitter.on('toBeginning', this._onToBeginning.bind(this));
   }
 
   _render() {

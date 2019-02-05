@@ -8,10 +8,7 @@ export default class ButtonPrevious extends HTMLElement {
   }
 
   _onPressPrev() {
-    const progressesBar = this.parentElement.querySelector('progresses-bar');
-
-    progressesBar.toBeginning();
-
+    EventEmitter.dispatch('toBeginning');
     EventEmitter.dispatch('previousSlide');
   }
 }

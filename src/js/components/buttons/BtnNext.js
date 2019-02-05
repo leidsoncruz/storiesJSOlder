@@ -8,8 +8,7 @@ export default class ButtonNext extends HTMLElement {
   }
 
   _onPressNext() {
-    const progressesBar = this.parentElement.querySelector('progresses-bar');
-    progressesBar.toEnd();
+    EventEmitter.dispatch('toEnd');
     EventEmitter.dispatch('nextSlide');
   }
 }
