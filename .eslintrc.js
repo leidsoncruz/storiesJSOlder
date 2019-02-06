@@ -25,7 +25,7 @@ module.exports = {
     "space-infix-ops": 1,
     "strict": [1, "never"],
     "max-statements-per-line": [2, { "max": 1 }],
-    "no-console": 2,
+    // "no-console": 2,
     "semi": 2,
     "no-extra-semi": 2,
     "no-unused-vars": [2, { "args": "after-used" }]
