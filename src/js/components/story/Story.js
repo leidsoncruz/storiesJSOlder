@@ -32,7 +32,11 @@ export default class Story extends HTMLElement {
     }
 
     modalDIV.appendChild(modalInstance);
-    screenfull.isFullscreen ? null : screenfull.request(modalDIV);
+    try {
+      screenfull.isFullscreen ? null : screenfull.request(modalDIV);
+    } catch (e) {
+      console.log(e);
+    }
   }
 
   _onExitStory() {

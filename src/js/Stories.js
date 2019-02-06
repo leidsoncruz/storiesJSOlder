@@ -22,7 +22,7 @@ export const StoriesJS = (wrapper, options) => {
   if (!(window.customElements && document.body.attachShadow)) {
     getWrapperElement().innerHTML = '<b>Your browser doesn\'t support Shadow DOM and Custom Elements v1.</b>';
     return;
-  }
+  };
 
   customElements.define('slide-image', ImageSlide);
   customElements.define('slide-video', VideoSlide);
@@ -37,10 +37,12 @@ export const StoriesJS = (wrapper, options) => {
   customElements.define('stories-wrapper', Wrapper);
   const _wrapper = new Wrapper(options);
 
-  getWrapperElement().appendChild(_wrapper);
+  getWrapperElement().appendChild(_wrapper);  
 };
 
 
 var opt = { stories: [{ title: 'poe', preview: 'https://raw.githubusercontent.com/ramon82/assets/master/zuck.js/stories/8.jpg', slides: [{ type: 'image', title: 't1', src: 'https://raw.githubusercontent.com/ramon82/assets/master/zuck.js/stories/8.jpg' }, { type: 'image', title: 't2', src: 'https://raw.githubusercontent.com/ramon82/assets/master/zuck.js/stories/9.jpg' }], }, { title: 'po2', preview: '', slides: [{ type: 'video', preview: 'https://raw.githubusercontent.com/ramon82/assets/master/zuck.js/stories/2.jpg', title: 't2', src: 'https://raw.githubusercontent.com/ramon82/assets/master/zuck.js/stories/2.mp4' }, { title: 't2', src: 'https://raw.githubusercontent.com/ramon82/assets/master/zuck.js/stories/6.jpg' }] }], };
+
+
 
 StoriesJS(null, opt);

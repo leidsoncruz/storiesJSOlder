@@ -30,6 +30,6 @@ export default class VideoSlide extends SlideBase {
   }
 
   _render() {
-    this.innerHTML = `<video src="${this.slide.src}" preload="auto"></video>`;
+    this.innerHTML = `<video playsinline autoplay src="${this.slide.src}" preload="auto"></video>`
   }
 }
