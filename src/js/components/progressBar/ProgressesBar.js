@@ -10,7 +10,7 @@ export default class ProgressesBar extends HTMLElement {
     this._bindCustomEvents();
   }
 
-  removeActiveBar() {
+  _onRemoveProgress() {
     this.activeBar.parentElement.removeAttribute('active');
   }
 
@@ -26,7 +26,7 @@ export default class ProgressesBar extends HTMLElement {
 
   _onToBeginning() {
     this._setProgressWidth(0);
-    this.removeActiveBar();
+    EventEmitter.dispatch('removeProgress');
   }
 
   _onToEnd() {
@@ -52,7 +52,7 @@ export default class ProgressesBar extends HTMLElement {
         EventEmitter.dispatch('stopProgress');
         EventEmitter.dispatch('nextSlide');
       } else {
-        width+=1;
+        width += 1;
         this._setProgressWidth(width);
       }
     }
@@ -63,10 +63,22 @@ export default class ProgressesBar extends HTMLElement {
     EventEmitter.on('toEnd', this._onToEnd.bind(this));
     EventEmitter.on('toBeginning', this._onToBeginning.bind(this));
     EventEmitter.on('setDuration', this._onSetDuration.bind(this));
+    EventEmitter.on('removeProgress', this._onRemoveProgress.bind(this));
+  }
+
+  _renderBar(value) {
+    return `<div class="progress-bar" data-index="${value}"><div class="mybar"></div></div>`;
   }
 
   _render() {
-    const _str = Array(this.length + 1).join(1).split('').map((x, i) => i) .map(index => `<div class="progress-bar" data-index="${index + 1}"> <div class="mybar"></div></div>`).join('');
-    this.innerHTML = _str;
+    let renderBarList = [];
+
+    for (let i = 0; i < this.length; i++) {
+      renderBarList.push(this._renderBar(i + 1));
+    }
+
+    renderBarList.join('');
+
+    this.innerHTML = renderBarList;
   }
 }

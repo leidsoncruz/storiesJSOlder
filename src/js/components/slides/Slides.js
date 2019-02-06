@@ -1,6 +1,6 @@
+import EventEmitter from '../../EventEmitter';
 import ImageSlide from './ImageSlide';
 import VideoSlide from './VideoSlide';
-import EventEmitter from '../../EventEmitter';
 
 export default class Slides extends HTMLElement {
   constructor(slides) {
@@ -47,8 +47,7 @@ export default class Slides extends HTMLElement {
 
   _onNextSlide() {
     if (this.nextSlide) {
-      const progressesBar = this.parentElement.querySelector('progresses-bar');
-      progressesBar.removeActiveBar();
+      EventEmitter.dispatch('removeProgress');
       EventEmitter.dispatch('activeItem', this.nextSlide);
     } else {
       EventEmitter.dispatch('nextStory');

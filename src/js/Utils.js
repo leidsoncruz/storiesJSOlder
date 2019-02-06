@@ -1,5 +1,3 @@
-import EventEmitter from './EventEmitter';
-
 export const CONSTANTS = {
   timer: 3
 };
