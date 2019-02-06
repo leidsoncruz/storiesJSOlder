@@ -1,3 +1,4 @@
+import { EVENTS } from '../../Utils';
 import EventEmitter from '../../EventEmitter';
 
 export default class ProgressesBar extends HTMLElement {
@@ -26,7 +27,7 @@ export default class ProgressesBar extends HTMLElement {
 
   _onToBeginning() {
     this._setProgressWidth(0);
-    EventEmitter.dispatch('removeProgress');
+    EventEmitter.dispatch(EVENTS.removeProgress);
   }
 
   _onToEnd() {
@@ -43,14 +44,14 @@ export default class ProgressesBar extends HTMLElement {
     this.activeBar = this.querySelector(`.progress-bar[data-index="${index}"] > .mybar`);
     this.activeBar.parentElement.setAttribute('active', true);
 
-    EventEmitter.dispatch('stopProgress');
+    EventEmitter.dispatch(EVENTS.stopProgress);
 
     this.id = setInterval(_incrementWidth.bind(this), Math.floor(this.timer) * 10);
 
     function _incrementWidth() {
       if (width >= 100) {
-        EventEmitter.dispatch('stopProgress');
-        EventEmitter.dispatch('nextSlide');
+        EventEmitter.dispatch(EVENTS.stopProgress);
+        EventEmitter.dispatch(EVENTS.nextSlide);
       } else {
         width += 1;
         this._setProgressWidth(width);
@@ -59,11 +60,11 @@ export default class ProgressesBar extends HTMLElement {
   }
 
   _bindCustomEvents() {
-    EventEmitter.on('stopProgress', this._onStopProgress.bind(this));
-    EventEmitter.on('toEnd', this._onToEnd.bind(this));
-    EventEmitter.on('toBeginning', this._onToBeginning.bind(this));
-    EventEmitter.on('setDuration', this._onSetDuration.bind(this));
-    EventEmitter.on('removeProgress', this._onRemoveProgress.bind(this));
+    EventEmitter.on(EVENTS.stopProgress, this._onStopProgress.bind(this));
+    EventEmitter.on(EVENTS.toEnd, this._onToEnd.bind(this));
+    EventEmitter.on(EVENTS.toBeginning, this._onToBeginning.bind(this));
+    EventEmitter.on(EVENTS.setDuration, this._onSetDuration.bind(this));
+    EventEmitter.on(EVENTS.removeProgress, this._onRemoveProgress.bind(this));
   }
 
   _renderBar(value) {

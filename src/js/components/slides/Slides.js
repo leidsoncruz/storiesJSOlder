@@ -1,3 +1,4 @@
+import  { EVENTS } from '../../Utils';
 import EventEmitter from '../../EventEmitter';
 import ImageSlide from './ImageSlide';
 import VideoSlide from './VideoSlide';
@@ -21,7 +22,7 @@ export default class Slides extends HTMLElement {
     this._render();
     this._bindCustomEvents();
 
-    EventEmitter.dispatch('activeItem', null);
+    EventEmitter.dispatch(EVENTS.activateSlide, null);
   }
 
   _deactiveActualSlide() {
@@ -47,27 +48,27 @@ export default class Slides extends HTMLElement {
 
   _onNextSlide() {
     if (this.nextSlide) {
-      EventEmitter.dispatch('removeProgress');
-      EventEmitter.dispatch('activeItem', this.nextSlide);
+      EventEmitter.dispatch(EVENTS.removeProgress);
+      EventEmitter.dispatch(EVENTS.activateSlide, this.nextSlide);
     } else {
-      EventEmitter.dispatch('nextStory');
+      EventEmitter.dispatch(EVENTS.nextStory);
     }
   }
 
   _onPreviousSlide() {
     if (this.previousSlide) {
-      EventEmitter.dispatch('activeItem', this.previousSlide);
+      EventEmitter.dispatch(EVENTS.activateSlide, this.previousSlide);
     } else {
-      EventEmitter.dispatch('previousStory');
+      EventEmitter.dispatch(EVENTS.previousStory);
     }
   }
 
   _bindCustomEvents() {
-    EventEmitter.clear('activeItem', 'nextSlide', 'previousSlide');
+    EventEmitter.clear(EVENTS.activateSlide, EVENTS.nextSlide, EVENTS.previousSlide);
 
-    EventEmitter.on('activeItem', this._onActiveItem.bind(this));
-    EventEmitter.on('nextSlide', this._onNextSlide.bind(this));
-    EventEmitter.on('previousSlide', this._onPreviousSlide.bind(this));
+    EventEmitter.on(EVENTS.activateSlide, this._onActiveItem.bind(this));
+    EventEmitter.on(EVENTS.nextSlide, this._onNextSlide.bind(this));
+    EventEmitter.on(EVENTS.previousSlide, this._onPreviousSlide.bind(this));
   }
 
   _render() {

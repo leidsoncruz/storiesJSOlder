@@ -1,3 +1,4 @@
+import  { EVENTS } from '../../Utils';
 import EventEmitter from '../../EventEmitter';
 
 export default class ButtonNext extends HTMLElement {
@@ -8,7 +9,7 @@ export default class ButtonNext extends HTMLElement {
   }
 
   _onPressNext() {
-    EventEmitter.dispatch('toEnd');
-    EventEmitter.dispatch('nextSlide');
+    EventEmitter.dispatch(EVENTS.toEnd);
+    EventEmitter.dispatch(EVENTS.nextSlide);
   }
 }

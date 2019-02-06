@@ -1,6 +1,6 @@
+import ButtonClose from '../buttons/BtnClose';
 import ButtonNext from '../buttons/BtnNext';
 import ButtonPrevious from '../buttons/BtnPrev';
-import ButtonClose from '../buttons/BtnClose';
 import ProgressesBar from '../progressBar/ProgressesBar';
 import Slides from '../slides/Slides';
 

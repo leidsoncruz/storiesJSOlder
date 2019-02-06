@@ -1,3 +1,4 @@
+import  { EVENTS } from '../../Utils';
 import EventEmitter from '../../EventEmitter';
 
 export default class ButtonPrevious extends HTMLElement {
@@ -8,7 +9,7 @@ export default class ButtonPrevious extends HTMLElement {
   }
 
   _onPressPrev() {
-    EventEmitter.dispatch('toBeginning');
-    EventEmitter.dispatch('previousSlide');
+    EventEmitter.dispatch(EVENTS.toBeginning);
+    EventEmitter.dispatch(EVENTS.previousSlide);
   }
 }

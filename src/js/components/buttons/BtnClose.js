@@ -1,3 +1,4 @@
+import  { EVENTS } from '../../Utils';
 import EventEmitter from '../../EventEmitter';
 
 export default class ButtonClose extends HTMLElement {
@@ -10,7 +11,7 @@ export default class ButtonClose extends HTMLElement {
 
   _bindEvents() {
     this.addEventListener('click', () => {
-      EventEmitter.dispatch('exitStory');
+      EventEmitter.dispatch(EVENTS.exit);
     });
   }
 

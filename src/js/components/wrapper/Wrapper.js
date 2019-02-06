@@ -1,6 +1,6 @@
-import Story from '../story/Story';
-
+import  { EVENTS } from '../../Utils';
 import EventEmitter from '../../EventEmitter';
+import Story from '../story/Story';
 
 class Wrapper extends HTMLElement {
   constructor(options) {
@@ -28,13 +28,13 @@ class Wrapper extends HTMLElement {
     const story = this.querySelector('stories-story[active="true"]');
     const target = story[`${axis}ElementSibling`];
 
-    EventEmitter.dispatch('stopProgress');
+    EventEmitter.dispatch(EVENTS.stopProgress);
     this._updateStory(story);
 
     if (target) {
-      EventEmitter.dispatch('openStory', this.instances[target.dataset.index]);
+      EventEmitter.dispatch(EVENTS.open, this.instances[target.dataset.index]);
     } else {
-      EventEmitter.dispatch('exitStory');
+      EventEmitter.dispatch(EVENTS.exit);
     }
   }
 
@@ -55,9 +55,9 @@ class Wrapper extends HTMLElement {
   }
 
   _bindCustomEvents() {
-    EventEmitter.clear('nextStory', 'previousStory');
-    EventEmitter.on('nextStory', this._onNextStory.bind(this));
-    EventEmitter.on('previousStory', this._onPreviousStory.bind(this));
+    EventEmitter.clear(EVENTS.nextStory, EVENTS.previousStory);
+    EventEmitter.on(EVENTS.nextStory, this._onNextStory.bind(this));
+    EventEmitter.on(EVENTS.previousStory, this._onPreviousStory.bind(this));
   }
 
   _render() {

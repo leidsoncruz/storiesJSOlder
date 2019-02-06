@@ -1,9 +1,8 @@
-import screenfull from 'screenfull';
-
+import { EVENTS, createModal } from '../../Utils';
 import Cover from '../cover/Cover';
-import Modal from '../modal/Modal';
-import { createModal } from '../../Utils';
 import EventEmitter from '../../EventEmitter';
+import Modal from '../modal/Modal';
+import screenfull from 'screenfull';
 
 export default class Story extends HTMLElement {
   constructor(story) {
@@ -15,7 +14,7 @@ export default class Story extends HTMLElement {
   }
 
   _onClickStory() {
-    EventEmitter.dispatch('openStory', this);
+    EventEmitter.dispatch(EVENTS.open, this);
   }
 
   _onOpenStory(event = {}) {
@@ -40,7 +39,7 @@ export default class Story extends HTMLElement {
   }
 
   _onExitStory() {
-    EventEmitter.dispatch('stopProgress');
+    EventEmitter.dispatch(EVENTS.stopProgress);
     const modal = document.querySelector('.modal.modal-stories');
     if (modal) {
       modal.remove();
@@ -52,13 +51,12 @@ export default class Story extends HTMLElement {
   }
 
   _bindCustomEvents() {
-    EventEmitter.clear('exitStory', 'openStory');
-    EventEmitter.on('exitStory', this._onExitStory.bind(this));
-    EventEmitter.on('openStory', this._onOpenStory.bind(this));
+    EventEmitter.clear(EVENTS.exit, EVENTS.open);
+    EventEmitter.on(EVENTS.exit, this._onExitStory.bind(this));
+    EventEmitter.on(EVENTS.open, this._onOpenStory.bind(this));
   }
 
   render() {
-    const index = this.getAttribute('data-index');
     const preview = this.story.preview || this.story.slides[0].preview || this.story.slides[0].src;
     const title = this.story.title;
     const cover = new Cover(preview, title);

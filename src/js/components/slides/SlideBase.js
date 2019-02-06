@@ -1,4 +1,4 @@
-import { CONSTANTS } from '../../Utils';
+import { CONSTANTS, EVENTS } from '../../Utils';
 import EventEmitter from '../../EventEmitter';
 
 export default class SlideBase extends HTMLElement {
@@ -15,7 +15,7 @@ export default class SlideBase extends HTMLElement {
   _start(timer = CONSTANTS.timer) {
     const index = this.getAttribute('data-index');
     const progressBar = this.parentElement.parentElement.getElementsByTagName('progresses-bar')[0];
-    EventEmitter.dispatch('setDuration', timer);
+    EventEmitter.dispatch(EVENTS.setDuration, timer);
     progressBar.startProgress(index);
   }
 
@@ -53,7 +53,7 @@ export default class SlideBase extends HTMLElement {
     const storyItems = element.parentElement.parentElement;
     const elements = storyItems.querySelectorAll('btn-prev,btn-next, btn-close, progresses-bar');
 
-    EventEmitter.dispatch('pauseSlide');
+    EventEmitter.dispatch(EVENTS.pauseSlide);
 
     elements.forEach(item => item.style.display = 'none');
   }
@@ -66,7 +66,7 @@ export default class SlideBase extends HTMLElement {
     const storyItems = element.parentElement.parentElement;
     const elements = storyItems.querySelectorAll('btn-prev,btn-next, btn-close, progresses-bar');
 
-    EventEmitter.dispatch('resumeSlide');
+    EventEmitter.dispatch(EVENTS.resumeSlide);
 
     elements.forEach(item => item.removeAttribute('style'));
 
