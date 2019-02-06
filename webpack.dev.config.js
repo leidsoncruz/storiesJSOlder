@@ -1,14 +1,19 @@
 const path = require('path');
 const webpack = require('webpack');
 
+const HtmlWebpackExternalsPlugin = require('html-webpack-externals-plugin')
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+
+
 module.exports = () => {
   return {
     mode: 'development',
     entry: path.resolve(__dirname, 'src/js/Stories.js'),
     output: {
-      path: path.resolve(__dirname, 'dist/tmp'),
       filename: 'stories.js',
-      library: 'StoriesJS',
+      path: path.resolve(__dirname, 'dist'),
+      libraryTarget: "this",
+      publicPath: '/'
     },
     module: {
       rules: [
@@ -43,13 +48,21 @@ module.exports = () => {
       ]
     },
     devServer: {
-      clientLogLevel: 'warning',
-      contentBase: path.resolve(__dirname, 'demo'),
-      overlay: true,
-      hot: true,
+      contentBase: './dist',
+      port: 8000,
+      public: 'local.globo.com'
     },
     plugins: [
-      new webpack.HotModuleReplacementPlugin()
+      new HtmlWebpackPlugin(),
+      new HtmlWebpackExternalsPlugin({
+        externals: [
+          {
+            module: 'wm',
+            entry: 'http://s.videos.globo.com/p2/j/api.min.js',
+            global: 'WM',
+          },
+        ],
+      }),
     ]
   }
 };
