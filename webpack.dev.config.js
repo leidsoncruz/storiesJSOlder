@@ -1,12 +1,11 @@
 const path = require('path');
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
 module.exports = () => {
   return {
-    mode: 'production',
+    mode: 'development',
     entry: path.resolve(__dirname, 'src/js/Stories.js'),
     output: {
-      path: path.resolve(__dirname, 'dist'),
+      path: path.resolve(__dirname, 'dist/tmp'),
       filename: 'stories.js',
       library: 'StoriesJS',
     },
@@ -42,13 +41,9 @@ module.exports = () => {
         }
       ]
     },
-    optimization: {
-      minimizer: [
-        new UglifyJsPlugin({
-          parallel: true,
-          sourceMap: true
-        })
-      ],
-    },
+    devServer: {
+      clientLogLevel: 'warning',
+      contentBase: path.resolve(__dirname, 'demo'),
+    }
   }
 };

@@ -1,4 +1,4 @@
-import screenfull from 'screenfull';
+// import screenfull from 'screenfull';
 import '../scss/Stories.scss';
 
 import Wrapper from './components/wrapper/Wrapper';
@@ -22,7 +22,7 @@ export const StoriesJS = (wrapper, options) => {
   if (!(window.customElements && document.body.attachShadow)) {
     getWrapperElement().innerHTML = '<b>Your browser doesn\'t support Shadow DOM and Custom Elements v1.</b>';
     return;
-  };
+  }
 
   customElements.define('slide-image', ImageSlide);
   customElements.define('slide-video', VideoSlide);
