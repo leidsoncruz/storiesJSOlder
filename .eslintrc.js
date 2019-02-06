@@ -28,7 +28,7 @@ module.exports = {
     "no-console": 2,
     "semi": 2,
     "no-extra-semi": 2,
-    "no-unused-vars": [2, { "args": "all" }]
+    "no-unused-vars": [2, { "args": "after-used" }]
   },
   "globals": {}
 };
