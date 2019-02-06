@@ -1,4 +1,5 @@
 const path = require('path');
+const webpack = require('webpack');
 
 module.exports = () => {
   return {
@@ -44,6 +45,11 @@ module.exports = () => {
     devServer: {
       clientLogLevel: 'warning',
       contentBase: path.resolve(__dirname, 'demo'),
-    }
+      overlay: true,
+      hot: true,
+    },
+    plugins: [
+      new webpack.HotModuleReplacementPlugin()
+    ]
   }
 };
