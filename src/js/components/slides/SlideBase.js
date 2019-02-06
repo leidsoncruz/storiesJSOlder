@@ -15,7 +15,7 @@ export default class SlideBase extends HTMLElement {
   _start(timer = CONSTANTS.timer) {
     const index = this.getAttribute('data-index');
     const progressBar = this.parentElement.parentElement.getElementsByTagName('progresses-bar')[0];
-    progressBar.setDuration(timer);
+    EventEmitter.dispatch('setDuration', timer);
     progressBar.startProgress(index);
   }
 

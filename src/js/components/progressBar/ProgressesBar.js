@@ -14,8 +14,8 @@ export default class ProgressesBar extends HTMLElement {
     this.activeBar.parentElement.removeAttribute('active');
   }
 
-  setDuration(timer) {
-    this.timer = timer;
+  _onSetDuration({ detail }) {
+    this.timer = detail;
   }
 
   _setProgressWidth(width) {
@@ -62,6 +62,7 @@ export default class ProgressesBar extends HTMLElement {
     EventEmitter.on('stopProgress', this._onStopProgress.bind(this));
     EventEmitter.on('toEnd', this._onToEnd.bind(this));
     EventEmitter.on('toBeginning', this._onToBeginning.bind(this));
+    EventEmitter.on('setDuration', this._onSetDuration.bind(this));
   }
 
   _render() {
