@@ -58,6 +58,7 @@ export default class Story extends HTMLElement {
 
   _onExitStory() {
     EventEmitter.dispatch(EVENTS.stopProgress);
+    EventEmitter.dispatch(EVENTS.callbackCloseStory, this._getActivatedSlide());
     const modal = document.querySelector('.modal.modal-stories');
     if (modal) {
       modal.remove();

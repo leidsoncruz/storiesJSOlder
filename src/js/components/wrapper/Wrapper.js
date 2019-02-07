@@ -72,7 +72,9 @@ class Wrapper extends HTMLElement {
 
   _bindCallbacksEvents() {
     EventEmitter.on(EVENTS.callbackClickStory, this.callbacks[EVENTS.callbackClickStory].bind(this));
+    EventEmitter.on(EVENTS.callbackCloseStory, this.callbacks[EVENTS.callbackCloseStory].bind(this));
   }
+
   _render() {
     this.instances = this.stories.map(this._createStory.bind(this));
   }
