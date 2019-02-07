@@ -9,6 +9,19 @@ export const createModal = () => {
   return modal;
 };
 
+export const getActivatedSlide = () => {
+  const modal = document.querySelector('.modal.modal-stories');
+  const story = modal.querySelector('.story__items');
+  const slide = story.querySelector('.story__item.active') || story.querySelector('.story__item');
+  
+  const result = {
+    storyPosition: Number(story && story.getAttribute('data-index')) + 1,
+    slidePosition: (slide) ? Number(slide.getAttribute('data-index')) : 1
+  };
+
+  return result;
+};
+
 const _STORY_EVENTS = {
   'open': 'BASE_OPEN',
   'exit': 'BASE_EXIT'

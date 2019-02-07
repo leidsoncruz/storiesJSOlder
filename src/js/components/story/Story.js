@@ -1,4 +1,4 @@
-import { EVENTS, createModal } from '../../Utils';
+import { EVENTS, createModal, getActivatedSlide } from '../../Utils';
 import Cover from '../cover/Cover';
 import EventEmitter from '../../EventEmitter';
 import Modal from '../modal/Modal';
@@ -19,7 +19,7 @@ export default class Story extends HTMLElement {
 
   _onClickStory() {
     EventEmitter.dispatch(EVENTS.open, this);
-    EventEmitter.dispatch(EVENTS.callbackClickStory, this._getActivatedSlide());
+    EventEmitter.dispatch(EVENTS.callbackClickStory, getActivatedSlide());
   }
 
   _getActivatedSlide() {
@@ -60,7 +60,7 @@ export default class Story extends HTMLElement {
 
   _onExitStory() {
     EventEmitter.dispatch(EVENTS.stopProgress);
-    EventEmitter.dispatch(EVENTS.callbackCloseStory, this._getActivatedSlide());
+    EventEmitter.dispatch(EVENTS.callbackCloseStory, getActivatedSlide());
     const modal = document.querySelector('.modal.modal-stories');
     if (modal) {
       modal.remove();
