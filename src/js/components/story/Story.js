@@ -22,6 +22,17 @@ export default class Story extends HTMLElement {
     EventEmitter.dispatch(EVENTS.callbackClickStory, this._getActivatedSlide());
   }
 
+  _getActivatedSlide() {
+    const modal = document.querySelector('.modal.modal-stories');
+    const story = modal.querySelector('.story__items');
+    const slide = story.querySelector('.story__item.active') || story.querySelector('.story__item');
+    
+    const result = {
+      storyPosition: Number(story && story.getAttribute('data-index')) + 1,
+      slidePosition: (slide) ? Number(slide.getAttribute('data-index')) : 1
+    };
+
+    return result;
   }
 
   _onOpenStory(event = {}) {
