@@ -12,6 +12,9 @@ class Wrapper extends HTMLElement {
 
     EventEmitter.define(this);
 
+    this._onNextStory = this._onNextStory.bind(this);
+    this._onPreviousStory = this._onPreviousStory.bind(this);
+
     this._render();
     this._bindCustomEvents();
   }
@@ -54,10 +57,15 @@ class Wrapper extends HTMLElement {
     return _story;
   }
 
+  _unbindCustomEvents() {
+    EventEmitter.off(EVENTS.nextStory, this._onNextStory);
+    EventEmitter.off(EVENTS.previousStory, this._onPreviousStory);
+  }
+
   _bindCustomEvents() {
-    EventEmitter.clear(EVENTS.nextStory, EVENTS.previousStory);
-    EventEmitter.on(EVENTS.nextStory, this._onNextStory.bind(this));
-    EventEmitter.on(EVENTS.previousStory, this._onPreviousStory.bind(this));
+    this._unbindCustomEvents();
+    EventEmitter.on(EVENTS.nextStory, this._onNextStory);
+    EventEmitter.on(EVENTS.previousStory, this._onPreviousStory);
   }
 
   _render() {

@@ -7,6 +7,13 @@ export default class ProgressesBar extends HTMLElement {
     this.classList.add('progresses-bars');
     this.length = length;
     this.id = 0;
+
+    this._onStopProgress = this._onStopProgress.bind(this);
+    this._onToEnd = this._onToEnd.bind(this);
+    this._onToBeginning = this._onToBeginning.bind(this);
+    this._onSetDuration = this._onSetDuration.bind(this);
+    this._onRemoveProgress = this._onRemoveProgress.bind(this);
+
     this._render();
     this._bindCustomEvents();
   }
@@ -59,12 +66,21 @@ export default class ProgressesBar extends HTMLElement {
     }
   }
 
+  _unbindCustomEvents() {
+    EventEmitter.off(EVENTS.stopProgress, this._onStopProgress);
+    EventEmitter.off(EVENTS.toEnd, this._onToEnd);
+    EventEmitter.off(EVENTS.toBeginning, this._onToBeginning);
+    EventEmitter.off(EVENTS.setDuration, this._onSetDuration);
+    EventEmitter.off(EVENTS.removeProgress, this._onRemoveProgress);
+  }
+
   _bindCustomEvents() {
-    EventEmitter.on(EVENTS.stopProgress, this._onStopProgress.bind(this));
-    EventEmitter.on(EVENTS.toEnd, this._onToEnd.bind(this));
-    EventEmitter.on(EVENTS.toBeginning, this._onToBeginning.bind(this));
-    EventEmitter.on(EVENTS.setDuration, this._onSetDuration.bind(this));
-    EventEmitter.on(EVENTS.removeProgress, this._onRemoveProgress.bind(this));
+    this._unbindCustomEvents();
+    EventEmitter.on(EVENTS.stopProgress, this._onStopProgress);
+    EventEmitter.on(EVENTS.toEnd, this._onToEnd);
+    EventEmitter.on(EVENTS.toBeginning, this._onToBeginning);
+    EventEmitter.on(EVENTS.setDuration, this._onSetDuration);
+    EventEmitter.on(EVENTS.removeProgress, this._onRemoveProgress);
   }
 
   _renderBar(value) {

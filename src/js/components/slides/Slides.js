@@ -8,6 +8,10 @@ export default class Slides extends HTMLElement {
     super();
     this.slides = slides;
     this.classList.add('story__slides');
+
+    this._onActiveItem = this._onActiveItem.bind(this);
+    this._onNextSlide = this._onNextSlide.bind(this);
+    this._onPreviousSlide = this._onPreviousSlide.bind(this);
   }
 
   get previousSlide() {
@@ -63,12 +67,17 @@ export default class Slides extends HTMLElement {
     }
   }
 
-  _bindCustomEvents() {
-    EventEmitter.clear(EVENTS.activateSlide, EVENTS.nextSlide, EVENTS.previousSlide);
+  _unbindCustomEvents() {
+    EventEmitter.off(EVENTS.activateSlide, this._onActiveItem);
+    EventEmitter.off(EVENTS.nextSlide, this._onNextSlide);
+    EventEmitter.off(EVENTS.previousSlide, this._onPreviousSlide);
+  }
 
-    EventEmitter.on(EVENTS.activateSlide, this._onActiveItem.bind(this));
-    EventEmitter.on(EVENTS.nextSlide, this._onNextSlide.bind(this));
-    EventEmitter.on(EVENTS.previousSlide, this._onPreviousSlide.bind(this));
+  _bindCustomEvents() {
+    this._unbindCustomEvents();
+    EventEmitter.on(EVENTS.activateSlide, this._onActiveItem);
+    EventEmitter.on(EVENTS.nextSlide, this._onNextSlide);
+    EventEmitter.on(EVENTS.previousSlide, this._onPreviousSlide);
   }
 
   _render() {

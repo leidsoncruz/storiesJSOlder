@@ -9,6 +9,10 @@ export default class Story extends HTMLElement {
     super();
     this.story = story;
     this.classList.add('story');
+
+    this._onExitStory = this._onExitStory.bind(this);
+    this._onOpenStory = this._onOpenStory.bind(this);
+
     this._bindEvents();
     this._bindCustomEvents();
   }
@@ -50,10 +54,15 @@ export default class Story extends HTMLElement {
     this.addEventListener('click', this._onClickStory.bind(this));
   }
 
+  _unbindCustomEvents() {
+    EventEmitter.off(EVENTS.exit, this._onExitStory);
+    EventEmitter.off(EVENTS.open, this._onOpenStory);
+  }
+
   _bindCustomEvents() {
-    EventEmitter.clear(EVENTS.exit, EVENTS.open);
-    EventEmitter.on(EVENTS.exit, this._onExitStory.bind(this));
-    EventEmitter.on(EVENTS.open, this._onOpenStory.bind(this));
+    this._unbindCustomEvents();
+    EventEmitter.on(EVENTS.exit, this._onExitStory);
+    EventEmitter.on(EVENTS.open, this._onOpenStory);
   }
 
   render() {

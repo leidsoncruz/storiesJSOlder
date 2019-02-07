@@ -43,14 +43,6 @@ const dispatch = (eventName = '', detail = null) => {
   console.log('emitter[dispatch]: ', eventName, detail, !EMITTER.listeners[eventName] ? 'Not listened' : 'Listened');
 };
 
-const clear = (...args) => {
-  const events = args.length > 0 ? args : Object.keys(EMITTER.listeners);
-
-  events.forEach(off);
-
-  console.log('emitter[clear]: ', events, EMITTER.listeners);
-};
-
 export default {
-  define, on, off, dispatch, clear
+  define, on, off, dispatch
 };
