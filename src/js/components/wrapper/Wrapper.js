@@ -1,4 +1,4 @@
-import  { EVENTS } from '../../Utils';
+import  { EVENTS, getActivatedSlide } from '../../Utils';
 import EventEmitter from '../../EventEmitter';
 import Story from '../story/Story';
 
@@ -37,6 +37,7 @@ class Wrapper extends HTMLElement {
     this._updateStory(story);
 
     if (target) {
+      EventEmitter.dispatch(EVENTS.callbackSlideEnd, getActivatedSlide());
       EventEmitter.dispatch(EVENTS.open, this.instances[target.dataset.index]);
     } else {
       EventEmitter.dispatch(EVENTS.exit);

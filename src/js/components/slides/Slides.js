@@ -1,4 +1,4 @@
-import  { EVENTS } from '../../Utils';
+import  { EVENTS, getActivatedSlide } from '../../Utils';
 import EventEmitter from '../../EventEmitter';
 import ImageSlide from './ImageSlide';
 import VideoSlide  from './VideoSlide';
@@ -57,6 +57,7 @@ export default class Slides extends HTMLElement {
 
   _onNextSlide() {    
     if (this.nextSlide) {
+      EventEmitter.dispatch(EVENTS.callbackSlideEnd, getActivatedSlide());
       EventEmitter.dispatch(EVENTS.removeProgress);
       EventEmitter.dispatch(EVENTS.activateSlide, this.nextSlide);
     } else {
@@ -66,6 +67,7 @@ export default class Slides extends HTMLElement {
 
   _onPreviousSlide() {
     if (this.previousSlide) {
+      EventEmitter.dispatch(EVENTS.callbackSlideEnd, getActivatedSlide());
       EventEmitter.dispatch(EVENTS.activateSlide, this.previousSlide);
     } else {
       EventEmitter.dispatch(EVENTS.previousStory);
