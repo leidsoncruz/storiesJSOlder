@@ -8,7 +8,14 @@ export default class Slides extends HTMLElement {
     super();
     this.slides = slides;
     this.classList.add('story__slides');
+
     this.VideoSlide = VideoSlide;
+
+    this._onActiveItem = this._onActiveItem.bind(this);
+    this._onNextSlide = this._onNextSlide.bind(this);
+    this._onPreviousSlide = this._onPreviousSlide.bind(this);
+    this._getVideoClass = this._getVideoClass.bind(this);
+
     this._bindCustomEvents();
     EventEmitter.dispatch(EVENTS.slidesAvailable);
   }
@@ -48,7 +55,7 @@ export default class Slides extends HTMLElement {
     _slide.init();
   }
 
-  _onNextSlide() {
+  _onNextSlide() {    
     if (this.nextSlide) {
       EventEmitter.dispatch(EVENTS.removeProgress);
       EventEmitter.dispatch(EVENTS.activateSlide, this.nextSlide);
@@ -68,13 +75,19 @@ export default class Slides extends HTMLElement {
   _getVideoClass({detail}) {
     this.VideoSlide = detail;
   }
+  _unbindCustomEvents() {
+    EventEmitter.off(EVENTS.activateSlide, this._onActiveItem);
+    EventEmitter.off(EVENTS.nextSlide, this._onNextSlide);
+    EventEmitter.off(EVENTS.previousSlide, this._onPreviousSlide);
+    EventEmitter.off(EVENTS.setVideoClass, this._getVideoClass);
+  }
 
   _bindCustomEvents() {
-    EventEmitter.clear(EVENTS.activateSlide, EVENTS.nextSlide, EVENTS.previousSlide);
-    EventEmitter.on(EVENTS.activateSlide, this._onActiveItem.bind(this));
-    EventEmitter.on(EVENTS.nextSlide, this._onNextSlide.bind(this));
-    EventEmitter.on(EVENTS.previousSlide, this._onPreviousSlide.bind(this));
-    EventEmitter.on(EVENTS.setVideoClass, this._getVideoClass.bind(this));
+    this._unbindCustomEvents();
+    EventEmitter.on(EVENTS.activateSlide, this._onActiveItem);
+    EventEmitter.on(EVENTS.nextSlide, this._onNextSlide);
+    EventEmitter.on(EVENTS.previousSlide, this._onPreviousSlide);
+    EventEmitter.on(EVENTS.setVideoClass, this._getVideoClass);
   }
 
   _render() {

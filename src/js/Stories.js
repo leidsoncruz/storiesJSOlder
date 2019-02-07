@@ -14,7 +14,6 @@ import VideoSlide from './components/slides/VideoSlide';
 import Wrapper from './components/wrapper/Wrapper';
 
 
-
 export const StoriesJS = (wrapper, options) => {
   const getClasses = (name, _default) => {
     try {
@@ -49,10 +48,71 @@ export const StoriesJS = (wrapper, options) => {
   getWrapperElement().appendChild(_wrapper);
 };
 
+/* eslint-disable */
+const callbacks = {
+  CALLBACK_CLICK_STORY: function onClickStory(event) {
+    // const result = Object.assign({}, this, event.detail);
+    console.log('CALLBACK_CLICK_STORY', event.detail);
+  },
+  CALLBACK_CLOSE_STORY: function onClickStory(event) {
+    // const result = Object.assign({}, this, event.detail);
+    console.log('CALLBACK_CLOSE_STORY', event.detail);
+  },
+};
 
-var opt = {stories: [{ title: 'poe', preview: 'https://raw.githubusercontent.com/ramon82/assets/master/zuck.js/stories/8.jpg', slides: [{ type: 'image', title: 't1', src: 'https://raw.githubusercontent.com/ramon82/assets/master/zuck.js/stories/8.jpg' }, { type: 'image', title: 't2', src: 'https://raw.githubusercontent.com/ramon82/assets/master/zuck.js/stories/9.jpg' }], }, { title: 'po2', preview: '', slides: [{ type: 'video', preview: 'https://raw.githubusercontent.com/ramon82/assets/master/zuck.js/stories/2.jpg', title: 't2', src: 'https://raw.githubusercontent.com/ramon82/assets/master/zuck.js/stories/2.mp4' }, { title: 't2', src: 'https://raw.githubusercontent.com/ramon82/assets/master/zuck.js/stories/6.jpg' }] }], };
+import SlideBase from './components/slides/SlideBase';
 
-// var opt = { classes: {VideoSlide: Teste}, stories: [{ title: 'poe', preview: 'https://raw.githubusercontent.com/ramon82/assets/master/zuck.js/stories/8.jpg', slides: [{ type: 'image', title: 't1', src: 'https://raw.githubusercontent.com/ramon82/assets/master/zuck.js/stories/8.jpg' }, { type: 'image', title: 't2', src: 'https://raw.githubusercontent.com/ramon82/assets/master/zuck.js/stories/9.jpg' }], }, { title: 'po2', preview: '', slides: [{ type: 'video', preview: 'https://raw.githubusercontent.com/ramon82/assets/master/zuck.js/stories/2.jpg', title: 't2', src: 1608952 }, { title: 't2', src: 'https://raw.githubusercontent.com/ramon82/assets/master/zuck.js/stories/6.jpg' }] }], };
+class VideoSlideGlobo extends SlideBase {
+  constructor(slide){
+    super(slide);
+    this.timer = null;
+    this.player = new WM.Player({
+      autoPlay: true,
+      chromeless: true,
+      exitFullscreenOnEnd: false,
+      onPlay: this._playVideo.bind(this)
+    });
+  }
+
+  _playVideo(){
+    if(this.player.getCurrentTime() === 0 || this.timer === 0){
+      this._start(this.timer || this.player.getDuration());
+    }
+  }
+
+  _touchStartItem(element){
+    super._touchStartItem(element);
+    this.player.pause();
+  }
+
+  _touchEndtItem(element){
+    super._touchEndtItem(element);
+    this.timer = null;
+    this.player.play();
+  }
+
+  attributeChangedCallback(name, oldValue, newValue) {
+    if(name === "active" && newValue === "true"){
+      this.timer = 0;
+      this.player.play();
+    }else if (name === "active" && newValue !== "true") {
+      this.player.stop();
+      this.timer = null;
+    }
+  }
+
+  _render(){
+    this.player.load(this.slide.src);
+    this.player.attachTo(this);
+  }
+}
+
+
+
+// var opt = {callbacks: callbacks, stories: [{ title: 'poe', preview: 'https://raw.githubusercontent.com/ramon82/assets/master/zuck.js/stories/8.jpg', slides: [{ type: 'image', title: 't1', src: 'https://raw.githubusercontent.com/ramon82/assets/master/zuck.js/stories/8.jpg' }, { type: 'image', title: 't2', src: 'https://raw.githubusercontent.com/ramon82/assets/master/zuck.js/stories/9.jpg' }], }, { title: 'po2', preview: '', slides: [{ type: 'video', preview: 'https://raw.githubusercontent.com/ramon82/assets/master/zuck.js/stories/2.jpg', title: 't2', src: 'https://raw.githubusercontent.com/ramon82/assets/master/zuck.js/stories/2.mp4' }, { title: 't2', src: 'https://raw.githubusercontent.com/ramon82/assets/master/zuck.js/stories/6.jpg' }] }], };
+
+var opt = { callbacks: callbacks, classes: {VideoSlide: VideoSlideGlobo}, stories: [{ title: 'poe', preview: 'https://raw.githubusercontent.com/ramon82/assets/master/zuck.js/stories/8.jpg', slides: [{ type: 'image', title: 't1', src: 'https://raw.githubusercontent.com/ramon82/assets/master/zuck.js/stories/8.jpg' }, { type: 'image', title: 't2', src: 'https://raw.githubusercontent.com/ramon82/assets/master/zuck.js/stories/9.jpg' }], }, { title: 'po2', preview: '', slides: [{ type: 'video', preview: 'https://raw.githubusercontent.com/ramon82/assets/master/zuck.js/stories/2.jpg', title: 't2', src: 1608952 }, { title: 't2', src: 'https://raw.githubusercontent.com/ramon82/assets/master/zuck.js/stories/6.jpg' }] }], };
 
 
 StoriesJS(null, opt);
+/* eslint-enable */

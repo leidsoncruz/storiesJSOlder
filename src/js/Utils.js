@@ -38,10 +38,16 @@ const _PROGRESS_BAR_EVENTS = {
   'setDuration': 'BASE_SET_DURATION'
 };
 
+const _CALLBACKS_EVENTS = {
+  'callbackClickStory': 'CALLBACK_CLICK_STORY',
+  'callbackCloseStory': 'CALLBACK_CLOSE_STORY'
+};
+
 export const EVENTS = Object.assign(
   {},
   _STORY_EVENTS,
   _WRAPPER_EVENTS,
   _SLIDE_EVENTS,
-  _PROGRESS_BAR_EVENTS
+  _PROGRESS_BAR_EVENTS,
+  _CALLBACKS_EVENTS
 );

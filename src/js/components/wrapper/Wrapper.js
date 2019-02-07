@@ -8,12 +8,17 @@ class Wrapper extends HTMLElement {
     this.classList.add('post-stories');
     this.options = options;
     this.stories = options.stories;
+    this.callbacks = options.callbacks;
     this.instances = [];
 
     EventEmitter.define(this);
 
+    this._onNextStory = this._onNextStory.bind(this);
+    this._onPreviousStory = this._onPreviousStory.bind(this);
+
     this._render();
     this._bindCustomEvents();
+    this._bindCallbacksEvents();
   }
 
   setIntervalId(id) {
@@ -61,11 +66,22 @@ class Wrapper extends HTMLElement {
     }
   }
 
+  _unbindCustomEvents() {
+    EventEmitter.off(EVENTS.nextStory, this._onNextStory);
+    EventEmitter.off(EVENTS.previousStory, this._onPreviousStory);
+    EventEmitter.off(EVENTS.slidesAvailable, this._setVideoClass);
+  }
+
   _bindCustomEvents() {
-    EventEmitter.clear(EVENTS.nextStory, EVENTS.previousStory);
-    EventEmitter.on(EVENTS.nextStory, this._onNextStory.bind(this));
-    EventEmitter.on(EVENTS.previousStory, this._onPreviousStory.bind(this));
+    this._unbindCustomEvents();
+    EventEmitter.on(EVENTS.nextStory, this._onNextStory);
+    EventEmitter.on(EVENTS.previousStory, this._onPreviousStory);
     EventEmitter.on(EVENTS.slidesAvailable, this._setVideoClass.bind(this));
+  }
+
+  _bindCallbacksEvents() {
+    EventEmitter.on(EVENTS.callbackClickStory, this.callbacks[EVENTS.callbackClickStory].bind(this));
+    EventEmitter.on(EVENTS.callbackCloseStory, this.callbacks[EVENTS.callbackCloseStory].bind(this));
   }
 
   _render() {
