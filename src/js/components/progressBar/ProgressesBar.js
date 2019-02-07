@@ -58,7 +58,7 @@ export default class ProgressesBar extends HTMLElement {
     function _incrementWidth() {
       if (width >= 100) {
         EventEmitter.dispatch(EVENTS.stopProgress);
-        // EventEmitter.dispatch(EVENTS.nextSlide);
+        EventEmitter.dispatch(EVENTS.nextSlide);
       } else {
         width += 1;
         this._setProgressWidth(width);
