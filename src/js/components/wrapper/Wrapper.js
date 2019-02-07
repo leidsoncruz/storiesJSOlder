@@ -81,14 +81,16 @@ class Wrapper extends HTMLElement {
   }
 
   _unbindCallbacksEvents() {
-    EventEmitter.off(EVENTS.callbackClickStory, this.callbacks[EVENTS.callbackClickStory].bind(this));
-    EventEmitter.off(EVENTS.callbackCloseStory, this.callbacks[EVENTS.callbackCloseStory].bind(this));
+    EventEmitter.off(EVENTS.callbackClickStory, this.callbacks[EVENTS.callbackClickStory]);
+    EventEmitter.off(EVENTS.callbackCloseStory, this.callbacks[EVENTS.callbackCloseStory]);
+    EventEmitter.off(EVENTS.callbackSlideEnd, this.callbacks[EVENTS.callbackSlideEnd]);
   }
 
   _bindCallbacksEvents() {
     this._unbindCallbacksEvents();
     EventEmitter.on(EVENTS.callbackClickStory, this.callbacks[EVENTS.callbackClickStory].bind(this));
     EventEmitter.on(EVENTS.callbackCloseStory, this.callbacks[EVENTS.callbackCloseStory].bind(this));
+    EventEmitter.on(EVENTS.callbackSlideEnd, this.callbacks[EVENTS.callbackSlideEnd].bind(this));
   }
 
   _render() {
