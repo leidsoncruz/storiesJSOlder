@@ -79,7 +79,13 @@ class Wrapper extends HTMLElement {
     EventEmitter.on(EVENTS.slidesAvailable, this._setVideoClass.bind(this));
   }
 
+  _unbindCallbacksEvents() {
+    EventEmitter.off(EVENTS.callbackClickStory, this.callbacks[EVENTS.callbackClickStory].bind(this));
+    EventEmitter.off(EVENTS.callbackCloseStory, this.callbacks[EVENTS.callbackCloseStory].bind(this));
+  }
+
   _bindCallbacksEvents() {
+    this._unbindCallbacksEvents();
     EventEmitter.on(EVENTS.callbackClickStory, this.callbacks[EVENTS.callbackClickStory].bind(this));
     EventEmitter.on(EVENTS.callbackCloseStory, this.callbacks[EVENTS.callbackCloseStory].bind(this));
   }
