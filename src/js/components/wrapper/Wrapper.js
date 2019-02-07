@@ -8,6 +8,7 @@ class Wrapper extends HTMLElement {
     this.classList.add('post-stories');
     this.options = options;
     this.stories = options.stories;
+    this.callbacks = options.callbacks;
     this.instances = [];
 
     EventEmitter.define(this);
