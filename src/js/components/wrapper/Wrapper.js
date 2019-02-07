@@ -18,6 +18,7 @@ class Wrapper extends HTMLElement {
 
     this._render();
     this._bindCustomEvents();
+    this._bindCallbacksEvents();
   }
 
   setIntervalId(id) {
@@ -69,6 +70,9 @@ class Wrapper extends HTMLElement {
     EventEmitter.on(EVENTS.previousStory, this._onPreviousStory);
   }
 
+  _bindCallbacksEvents() {
+    EventEmitter.on(EVENTS.callbackClickStory, this.callbacks[EVENTS.callbackClickStory].bind(this));
+  }
   _render() {
     this.instances = this.stories.map(this._createStory.bind(this));
   }

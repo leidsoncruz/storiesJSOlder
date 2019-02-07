@@ -19,6 +19,9 @@ export default class Story extends HTMLElement {
 
   _onClickStory() {
     EventEmitter.dispatch(EVENTS.open, this);
+    EventEmitter.dispatch(EVENTS.callbackClickStory, this._getActivatedSlide());
+  }
+
   }
 
   _onOpenStory(event = {}) {
