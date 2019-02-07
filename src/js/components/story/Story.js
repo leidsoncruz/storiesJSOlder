@@ -31,10 +31,12 @@ export default class Story extends HTMLElement {
     }
 
     modalDIV.appendChild(modalInstance);
+
+    //for safari IOS
     try {
       screenfull.isFullscreen ? null : screenfull.request(modalDIV);
     } catch (e) {
-      console.log(e);
+      console.log(e); //eslint-disable-line
     }
   }
 

@@ -1,13 +1,16 @@
 import  { EVENTS } from '../../Utils';
 import EventEmitter from '../../EventEmitter';
 import ImageSlide from './ImageSlide';
-import VideoSlide from './VideoSlide';
+import VideoSlide  from './VideoSlide';
 
 export default class Slides extends HTMLElement {
   constructor(slides) {
     super();
     this.slides = slides;
     this.classList.add('story__slides');
+    this.VideoSlide = VideoSlide;
+    this._bindCustomEvents();
+    EventEmitter.dispatch(EVENTS.slidesAvailable);
   }
 
   get previousSlide() {
@@ -20,8 +23,6 @@ export default class Slides extends HTMLElement {
 
   init() {
     this._render();
-    this._bindCustomEvents();
-
     EventEmitter.dispatch(EVENTS.activateSlide, null);
   }
 
@@ -40,7 +41,8 @@ export default class Slides extends HTMLElement {
   }
 
   _createSlide(slide, index) {
-    const _slide = slide.type === 'video' ? new VideoSlide(slide) : new ImageSlide(slide);
+    const videoClass = this.VideoSlide || VideoSlide;
+    const _slide = slide.type === 'video' ? new videoClass(slide) : new ImageSlide(slide);
     _slide.setAttribute('data-index', index + 1);
     this.appendChild(_slide);
     _slide.init();
@@ -63,12 +65,16 @@ export default class Slides extends HTMLElement {
     }
   }
 
+  _getVideoClass({detail}) {
+    this.VideoSlide = detail;
+  }
+
   _bindCustomEvents() {
     EventEmitter.clear(EVENTS.activateSlide, EVENTS.nextSlide, EVENTS.previousSlide);
-
     EventEmitter.on(EVENTS.activateSlide, this._onActiveItem.bind(this));
     EventEmitter.on(EVENTS.nextSlide, this._onNextSlide.bind(this));
     EventEmitter.on(EVENTS.previousSlide, this._onPreviousSlide.bind(this));
+    EventEmitter.on(EVENTS.setVideoClass, this._getVideoClass.bind(this));
   }
 
   _render() {

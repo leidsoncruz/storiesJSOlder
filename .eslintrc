@@ -30,5 +30,5 @@
     "no-extra-semi": 2,
     "no-unused-vars": [2, { "args": "after-used" }]
   },
-  "globals": {}
+  "globals": {"WM": "readable"}
 }

@@ -1,3 +1,5 @@
+/* eslint-disable  no-console */
+
 let EMITTER = {
   target: null,
   listeners: {}

@@ -54,10 +54,18 @@ class Wrapper extends HTMLElement {
     return _story;
   }
 
+  _setVideoClass() {
+    const { classes } = this.options;
+    if (classes && classes.VideoSlide) {
+      EventEmitter.dispatch(EVENTS.setVideoClass, this.options.classes.VideoSlide);
+    }
+  }
+
   _bindCustomEvents() {
     EventEmitter.clear(EVENTS.nextStory, EVENTS.previousStory);
     EventEmitter.on(EVENTS.nextStory, this._onNextStory.bind(this));
     EventEmitter.on(EVENTS.previousStory, this._onPreviousStory.bind(this));
+    EventEmitter.on(EVENTS.slidesAvailable, this._setVideoClass.bind(this));
   }
 
   _render() {

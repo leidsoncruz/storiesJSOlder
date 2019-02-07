@@ -16,7 +16,8 @@ const _STORY_EVENTS = {
 
 const _WRAPPER_EVENTS = {
   'nextStory': 'BASE_NEXT_STORY',
-  'previousStory': 'BASE_PREVIOUS_STORY'
+  'previousStory': 'BASE_PREVIOUS_STORY',
+  'setVideoClass': 'SET_VIDEO_CLASS'
 };
 
 const _SLIDE_EVENTS = {
@@ -24,7 +25,8 @@ const _SLIDE_EVENTS = {
   'nextSlide': 'BASE_NEXT_SLIDE',
   'previousSlide': 'BASE_PREVIOUS_SLIDE',
   'pauseSlide': 'BASE_PAUSE_SLIDE',
-  'resumeSlide': 'BASE_RESUME_SLIDE'
+  'resumeSlide': 'BASE_RESUME_SLIDE',
+  'slidesAvailable': 'SLIDES_AVAILABLE'
 };
 
 const _PROGRESS_BAR_EVENTS = {
