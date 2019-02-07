@@ -58,6 +58,10 @@ const callbacks = {
     // const result = Object.assign({}, this, event.detail);
     console.log('CALLBACK_CLOSE_STORY', event.detail);
   },
+  CALLBACK_SLIDE_END: function onSlideEnd(event) {
+    // const result = Object.assign({}, this, event.detail);
+    console.log('CALLBACK_SLIDE_END', event.detail);
+  }
 };
 
 import SlideBase from './components/slides/SlideBase';
