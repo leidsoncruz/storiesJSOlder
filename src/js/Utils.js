@@ -40,7 +40,8 @@ const _PROGRESS_BAR_EVENTS = {
 
 const _CALLBACKS_EVENTS = {
   'callbackClickStory': 'CALLBACK_CLICK_STORY',
-  'callbackCloseStory': 'CALLBACK_CLOSE_STORY'
+  'callbackCloseStory': 'CALLBACK_CLOSE_STORY',
+  'callbackSlideEnd': 'CALLBACK_SLIDE_END'
 };
 
 export const EVENTS = Object.assign(
